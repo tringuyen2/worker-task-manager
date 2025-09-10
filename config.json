@@ -1,0 +1,103 @@
+{
+  "worker": {
+    "worker_id": "worker_001",
+    "worker_name": "AI Worker Node 1",
+    "mongodb": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "ai_tasks",
+      "username": "",
+      "password": "",
+      "auth_source": "admin"
+    },
+    "minio": {
+      "endpoint": "localhost:9000",
+      "access_key": "minioadmin",
+      "secret_key": "minioadmin",
+      "bucket": "ai-tasks",
+      "secure": false,
+      "region": null
+    },
+    "redis": {
+      "host": "localhost",
+      "port": 6379,
+      "db": 0,
+      "password": "redis123"
+    },
+    "celery": {
+      "broker_url": null,
+      "result_backend": null,
+      "task_serializer": "json",
+      "accept_content": ["json"],
+      "result_serializer": "json",
+      "timezone": "UTC",
+      "enable_utc": true,
+      "task_routes": {},
+      "worker_prefetch_multiplier": 1,
+      "task_acks_late": true,
+      "worker_max_tasks_per_child": 1000
+    },
+    "active_tasks": [
+      "face_detection",
+      "text_sentiment"
+    ],
+    "active_pipelines": [
+      "image_processing_pipeline"
+    ],
+    "task_configs": {
+      "face_detection": {
+        "task_id": "face_detection",
+        "enabled": true,
+        "queue": "vision",
+        "priority": 7,
+        "max_retries": 3,
+        "retry_delay": 60,
+        "timeout": 120,
+        "memory_limit": null,
+        "cpu_limit": null
+      },
+      "text_sentiment": {
+        "task_id": "text_sentiment",
+        "enabled": true,
+        "queue": "nlp",
+        "priority": 5,
+        "max_retries": 3,
+        "retry_delay": 60,
+        "timeout": 60,
+        "memory_limit": null,
+        "cpu_limit": null
+      }
+    },
+    "pipeline_configs": {
+      "image_processing_pipeline": {
+        "pipeline_id": "image_processing_pipeline",
+        "enabled": true,
+        "tasks": [
+          "face_detection"
+        ],
+        "queue": "pipeline",
+        "priority": 5,
+        "parallel": false,
+        "fail_fast": true
+      }
+    },
+    "task_cache_dir": "./task_cache",
+    "pipeline_cache_dir": "./pipeline_cache",
+    "auto_update": true,
+    "max_concurrent_tasks": 5,
+    "health_check_interval": 30,
+    "log_level": "INFO"
+  },
+  "system": {
+    "version": "1.0.0",
+    "environment": "development",
+    "debug": false,
+    "api_enabled": true,
+    "api_host": "0.0.0.0",
+    "api_port": 8000,
+    "metrics_enabled": true,
+    "prometheus_port": 8001,
+    "api_key": null,
+    "jwt_secret": null
+  }
+}

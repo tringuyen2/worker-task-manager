@@ -1,225 +1,70 @@
-# docker-compose.yml - Complete AI Task Worker Stack
 version: '3.8'
 
 services:
-  # MongoDB Database
   mongodb:
-    image: mongo:6.0
-    container_name: ai_mongodb
+    image: mongo:7.0
+    container_name: ai_worker_mongodb
     restart: unless-stopped
+    ports:
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin123
       MONGO_INITDB_DATABASE: ai_tasks
-    ports:
-      - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-      - ./mongo-init:/docker-entrypoint-initdb.d
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
-      - ai_network
+      - ai_worker_network
 
-  # MinIO Object Storage
   minio:
     image: minio/minio:latest
-    container_name: ai_minio
+    container_name: ai_worker_minio
     restart: unless-stopped
-    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
-    ports:
-      - "9000:9000"   # API
-      - "9001:9001"   # Console
+    command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
     networks:
-      - ai_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+      - ai_worker_network
 
-  # AI Worker Node 1
-  ai_worker_1:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: ai_worker_1
-    restart: unless-stopped
-    environment:
-      - WORKER_ID=worker_001
-      - WORKER_NAME=AI Worker Node 1
-      - MONGODB_HOST=mongodb
-      - MONGODB_DATABASE=ai_tasks
-      - MONGODB_USERNAME=admin
-      - MONGODB_PASSWORD=admin123
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin123
-    volumes:
-      - ./config:/app/config
-      - worker_1_cache:/app/task_cache
-      - ./logs:/app/logs
-    depends_on:
-      - mongodb
-      - minio
-    networks:
-      - ai_network
-    command: ["python3", "ai_worker.py", "--daemon", "--config", "config/worker_1.json"]
-
-  # AI Worker Node 2 (Optional)
-  ai_worker_2:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: ai_worker_2
-    restart: unless-stopped
-    environment:
-      - WORKER_ID=worker_002
-      - WORKER_NAME=AI Worker Node 2
-      - MONGODB_HOST=mongodb
-      - MONGODB_DATABASE=ai_tasks
-      - MONGODB_USERNAME=admin
-      - MONGODB_PASSWORD=admin123
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin123
-    volumes:
-      - ./config:/app/config
-      - worker_2_cache:/app/task_cache
-      - ./logs:/app/logs
-    depends_on:
-      - mongodb
-      - minio
-    networks:
-      - ai_network
-    command: ["python3", "ai_worker.py", "--daemon", "--config", "config/worker_2.json"]
-    profiles: ["multi-worker"]
-
-  # Task Manager API (Optional REST API)
-  task_api:
-    build:
-      context: .
-      dockerfile: Dockerfile.api
-    container_name: ai_task_api
+  redis:
+    image: redis:7.2-alpine
+    container_name: ai_worker_redis
     restart: unless-stopped
     ports:
-      - "5000:5000"
-    environment:
-      - MONGODB_HOST=mongodb
-      - MONGODB_DATABASE=ai_tasks
-      - MONGODB_USERNAME=admin
-      - MONGODB_PASSWORD=admin123
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=minioadmin
-      - MINIO_SECRET_KEY=minioadmin123
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass redis123
     volumes:
-      - ./config:/app/config
-    depends_on:
-      - mongodb
-      - minio
+      - redis_data:/data
     networks:
-      - ai_network
-    profiles: ["api"]
+      - ai_worker_network
 
-  # Monitoring Dashboard (Optional)
-  mongo_express:
-    image: mongo-express:latest
-    container_name: ai_mongo_express
+  # Optional: Flower for Celery monitoring
+  flower:
+    image: mher/flower:latest
+    container_name: ai_worker_flower
     restart: unless-stopped
     ports:
-      - "8081:8081"
+      - "5555:5555"
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: admin123
-      ME_CONFIG_MONGODB_SERVER: mongodb
-      ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+      CELERY_BROKER_URL: redis://:redis123@redis:6379/0
+      FLOWER_PORT: 5555
     depends_on:
-      - mongodb
+      - redis
     networks:
-      - ai_network
-    profiles: ["monitoring"]
+      - ai_worker_network
 
 volumes:
   mongodb_data:
-    driver: local
   minio_data:
-    driver: local
-  worker_1_cache:
-    driver: local
-  worker_2_cache:
-    driver: local
+  redis_data:
 
 networks:
-  ai_network:
+  ai_worker_network:
     driver: bridge
-
----
-# Dockerfile - AI Worker Container
-FROM python:3.9-slim
-
-WORKDIR /app
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    wget \
-    git \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libgomp1 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy application code
-COPY . .
-
-# Create necessary directories
-RUN mkdir -p /app/task_cache /app/logs /app/config
-
-# Set permissions
-RUN chmod +x /app/*.py
-
-EXPOSE 5000
-
-CMD ["python3", "ai_worker.py", "--daemon"]
-
----
-# Dockerfile.api - REST API Container
-FROM python:3.9-slim
-
-WORKDIR /app
-
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt .
-COPY requirements_api.txt .
-
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir -r requirements_api.txt
-
-COPY . .
-
-RUN mkdir -p /app/config
-
-EXPOSE 5000
-
-CMD ["python3", "api_server.py"]
-
----
-# requirements_api.txt - Additional API requirements
-flask>=2.0.0
-flask-cors>=3.0.0
-gunicorn>=20.1.0
-redis>=4.0.0

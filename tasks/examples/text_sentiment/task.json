@@ -1,0 +1,50 @@
+{
+  "task_id": "text_sentiment",
+  "name": "Text Sentiment Analysis",
+  "description": "Analyze sentiment of text using rule-based approach with keyword matching",
+  "version": "1.0.0",
+  "author": "AI Team",
+  "category": "natural_language_processing",
+  "entry_point": "task.Task",
+  "requirements": [],
+  "tags": ["nlp", "sentiment", "text_analysis"],
+  "queue": "nlp",
+  "priority": 5,
+  "timeout": 60,
+  "max_retries": 3,
+  "input_schema": {
+    "type": ["string", "object"],
+    "description": "Text string or object with 'text'/'message' field"
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "sentiment": {
+        "type": "string",
+        "enum": ["positive", "negative", "neutral"]
+      },
+      "confidence": {
+        "type": "number",
+        "minimum": 0.0,
+        "maximum": 1.0
+      },
+      "scores": {
+        "type": "object",
+        "properties": {
+          "positive": {"type": "number"},
+          "negative": {"type": "number"},
+          "net": {"type": "number"}
+        }
+      },
+      "statistics": {
+        "type": "object",
+        "properties": {
+          "word_count": {"type": "integer"},
+          "sentiment_words": {"type": "integer"},
+          "positive_words": {"type": "integer"},
+          "negative_words": {"type": "integer"}
+        }
+      }
+    }
+  }
+}

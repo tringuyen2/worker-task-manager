@@ -1,0 +1,40 @@
+{
+  "task_id": "face_detection",
+  "name": "Face Detection",
+  "description": "Detect faces in images using OpenCV Haar Cascades",
+  "version": "1.0.0",
+  "author": "AI Team",
+  "category": "computer_vision",
+  "entry_point": "task.Task",
+  "requirements": [
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0"
+  ],
+  "tags": ["vision", "face_detection", "opencv"],
+  "queue": "vision",
+  "priority": 7,
+  "timeout": 120,
+  "max_retries": 3,
+  "input_schema": {
+    "type": ["string", "object", "array"],
+    "description": "Image file path, numpy array, or object with image data"
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "faces": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "bbox": {"type": "array", "items": {"type": "integer"}},
+            "confidence": {"type": "number"},
+            "center": {"type": "array", "items": {"type": "integer"}}
+          }
+        }
+      },
+      "face_count": {"type": "integer"},
+      "image_size": {"type": "array", "items": {"type": "integer"}}
+    }
+  }
+}

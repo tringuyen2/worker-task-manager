@@ -1,279 +1,402 @@
-# AI Task Worker - Complete Setup Guide
+# AI Task Worker System
 
-## 🏗️ Kiến trúc hệ thống
+Một hệ thống phân tán để quản lý và thực thi các AI task với Celery, MongoDB và MinIO.
+
+## 🚀 Tính Năng Chính
+
+- **Dynamic Task Loading**: Load task từ MinIO và cache locally
+- **Celery Integration**: Hệ thống queue phân tán với Redis
+- **Pipeline Support**: Thực thi chuỗi tasks tuần tự hoặc song song  
+- **Database Tracking**: Lưu trữ metadata và execution history trong MongoDB
+- **File Storage**: Lưu trữ task code trong MinIO (S3-compatible)
+- **Health Monitoring**: Worker status và health check tự động
+- **CLI Tools**: Công cụ quản lý tasks và workers
+- **Configuration Management**: Config linh hoạt với validation
+
+## 🏗️ Kiến Trúc Hệ Thống
 
 ```
-AI Task Worker System
-├── MongoDB (Task Registry & Execution History)
-├── MinIO (Task Storage - ZIP files)
-├── AI Worker (Dynamic Task Loader)
-└── Task Registration Tool
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│     MongoDB     │    │      MinIO      │    │      Redis      │
+│  (Metadata +    │    │  (Task Storage) │    │   (Message      │
+│   History)      │    │                 │    │    Broker)      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+         ┌─────────────────────────────────────────────────────┐
+         │                AI Worker Nodes                      │
+         │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │
+         │  │   Worker 1  │  │   Worker 2  │  │   Worker N  │ │
+         │  │  - Celery   │  │  - Celery   │  │  - Celery   │ │
+         │  │  - Tasks    │  │  - Tasks    │  │  - Tasks    │ │
+         │  │  - Monitor  │  │  - Monitor  │  │  - Monitor  │ │
+         │  └─────────────┘  └─────────────┘  └─────────────┘ │
+         └─────────────────────────────────────────────────────┘
 ```
 
-## 📋 Requirements
+## 📋 Yêu Cầu Hệ Thống
+
+- Python 3.8+
+- Docker & Docker Compose
+- 4GB RAM (tối thiểu)
+- 10GB disk space
+
+## ⚡ Cài Đặt Nhanh
+
+### 1. Clone Repository
 
 ```bash
-pip install pymongo minio pydantic
+git clone <repository-url>
+cd ai-task-worker
 ```
 
-## 🔧 Setup Instructions
+### 2. Khởi Động Services
 
-### 1. Tạo file requirements.txt
-```txt
-pymongo>=4.0.0
-minio>=7.1.0
-pydantic>=1.10.0
-```
-
-### 2. Cài đặt MongoDB
 ```bash
-# Docker
-docker run -d --name mongodb -p 27017:27017 mongo:latest
+# Start MongoDB, MinIO, Redis
+docker-compose up -d
 
-# Hoặc cài đặt local
-# Ubuntu: sudo apt install mongodb
-# MacOS: brew install mongodb-community
+# Check services
+docker-compose ps
 ```
 
-### 3. Cài đặt MinIO
+### 3. Cài Đặt Python Dependencies
+
 ```bash
-# Docker  
-docker run -d --name minio \
-  -p 9000:9000 -p 9001:9001 \
-  -e "MINIO_ROOT_USER=minioadmin" \
-  -e "MINIO_ROOT_PASSWORD=minioadmin" \
-  minio/minio server /data --console-address ":9001"
-
-# Access MinIO Console: http://localhost:9001
+pip install -r requirements.txt
 ```
 
-### 4. Tạo config.json
+### 4. Khởi Tạo Hệ Thống
+
 ```bash
-python3 -c "from config import create_default_config; create_default_config()"
+python3 scripts/init_system.py
 ```
 
-Config mặc định sẽ được tạo:
-```json
-{
-  "worker_id": "worker_001",
-  "worker_name": "AI Worker Node 1", 
-  "active_tasks": [
-    "face_detection",
-    "text_sentiment"
-  ],
-  "mongodb": {
-    "host": "localhost",
-    "port": "27017", 
-    "database": "ai_tasks",
-    "username": "",
-    "password": ""
-  },
-  "minio": {
-    "endpoint": "localhost:9000",
-    "access_key": "minioadmin",
-    "secret_key": "minioadmin", 
-    "bucket": "ai-tasks",
-    "secure": false
-  },
-  "task_cache_dir": "./task_cache",
-  "auto_update": true,
-  "max_concurrent_tasks": 5
-}
-```
+### 5. Khởi Động Worker
 
-## 🚀 Usage Workflows
-
-### Workflow 1: Tạo và đăng ký task mới
-
-#### Bước 1: Tạo template task
 ```bash
-python3 task_register.py create --task-id my_new_task
+# Method 1: Use script
+./start_worker.sh
+
+# Method 2: Manual
+python3 -m tools.worker_cli start --daemon
 ```
 
-#### Bước 2: Implement task logic
-Chỉnh sửa file `tasks/my_new_task/task.py`:
+## 🔧 Sử Dụng
+
+### Quản Lý Tasks
+
+```bash
+# List all tasks
+python3 -m tools.task_manager list
+
+# Create new task
+python3 -m tools.task_manager create my_new_task --template ml
+
+# Register task
+python3 -m tools.task_manager register tasks/my_new_task
+
+# Test task
+python3 -m tools.task_manager test face_detection '"/path/to/image.jpg"'
+
+# Task info
+python3 -m tools.task_manager info face_detection
+```
+
+### Quản Lý Workers
+
+```bash
+# Worker status
+python3 -m tools.worker_cli status
+
+# Monitor worker
+python3 -m tools.worker_cli monitor
+
+# Execute task
+python3 -m tools.worker_cli execute face_detection '{"image_path": "/path/to/image.jpg"}'
+
+# View execution history
+python3 -m tools.worker_cli executions --limit 50
+
+# Health check
+python3 -m tools.worker_cli health
+```
+
+### API Usage (Python)
 
 ```python
-def process(self, input_data: Any) -> Any:
-    # Implement your AI logic here
-    result = your_ai_processing(input_data)
-    return result
+from worker.task_registry import task_registry
 
-def get_requirements(self) -> List[str]:
-    return ['opencv-python', 'tensorflow']  # Your dependencies
+# Submit task
+execution_id = task_registry.submit_task(
+    "face_detection", 
+    {"image_path": "/path/to/image.jpg"}
+)
+
+# Check result
+from core.database.operations import db_ops
+record = db_ops.get_execution_record(execution_id)
+print(record.status, record.output_data)
 ```
 
-#### Bước 3: Đăng ký task
+## 📝 Tạo Task Mới
+
+### 1. Create Task Template
+
 ```bash
-python3 task_register.py register --folder tasks/my_new_task
+python3 -m tools.task_manager create my_ai_task --template ml --author "Your Name"
 ```
 
-### Workflow 2: Cập nhật config và chạy worker
+### 2. Implement Task Logic
 
-#### Bước 1: Cập nhật config.json
-```json
-{
-  "active_tasks": [
-    "face_detection",
-    "text_sentiment", 
-    "my_new_task"
-  ]
-}
-```
+Chỉnh sửa `tasks/my_ai_task/task.py`:
 
-#### Bước 2: Chạy worker
-```bash
-# Chế độ daemon
-python3 ai_worker.py --daemon
-
-# Chế độ single task
-python3 ai_worker.py --task my_new_task --input "test data"
-
-# List tasks
-python3 ai_worker.py --list
-```
-
-### Workflow 3: Quản lý tasks
-
-#### Xem danh sách tasks đã đăng ký
-```bash
-python3 task_register.py list
-```
-
-#### Update task (re-register với version mới)
-```bash
-python3 task_register.py register --folder tasks/updated_task --task-id existing_task
-```
-
-## 📁 Cấu trúc thư mục hoàn chỉnh
-
-```
-ai_task_worker/
-├── config.py              # Config models & defaults
-├── database.py            # MongoDB operations  
-├── storage.py             # MinIO operations
-├── task_loader.py         # Dynamic task loading
-├── ai_worker.py           # Main worker application
-├── task_register.py       # Task registration tool
-├── config.json            # Worker configuration
-├── requirements.txt       # Python dependencies
-├── tasks/                 # Task development folder
-│   ├── face_detection/
-│   │   ├── task.py
-│   │   ├── task.json
-│   │   └── requirements.txt
-│   └── text_sentiment/
-│       ├── task.py  
-│       ├── task.json
-│       └── requirements.txt
-└── task_cache/            # Runtime task cache
-    └── (extracted tasks)
-```
-
-## 🔄 Task Lifecycle
-
-1. **Development**: Tạo task trong `tasks/` folder
-2. **Registration**: Đóng gói thành ZIP và upload lên MinIO, lưu metadata vào MongoDB
-3. **Configuration**: Thêm task ID vào `active_tasks` trong config.json
-4. **Loading**: Worker tự động download và load task khi khởi động
-5. **Execution**: Task sẵn sàng xử lý requests
-6. **Monitoring**: Execution history được lưu trong MongoDB
-
-## 🧪 Testing
-
-### Test đơn task
 ```python
-# test_task.py
-from ai_worker import AIWorker
+from tasks.base.task_base import MLTask
 
-worker = AIWorker("config.json")
-worker.initialize()
-
-result = worker.process_task("face_detection", "path/to/image.jpg")
-print(result)
+class Task(MLTask):
+    def load_model(self):
+        # Load your ML model
+        return your_model
+    
+    def predict(self, preprocessed_input):
+        # Run inference
+        return self.model.predict(preprocessed_input)
+    
+    def preprocess_input(self, input_data):
+        # Preprocess input
+        return processed_data
 ```
 
-### Test với API wrapper
+### 3. Configure Task
+
+Chỉnh sửa `tasks/my_ai_task/task.json`:
+
+```json
+{
+  "task_id": "my_ai_task",
+  "name": "My AI Task",
+  "description": "Description of what this task does",
+  "requirements": ["tensorflow>=2.0.0"],
+  "queue": "ml",
+  "priority": 5,
+  "timeout": 300
+}
+```
+
+### 4. Register Task
+
+```bash
+python3 -m tools.task_manager register tasks/my_ai_task
+```
+
+## 🔄 Pipeline System
+
+### Sequential Pipeline
+
 ```python
-# api_wrapper.py
-from flask import Flask, request, jsonify
-from ai_worker import AIWorker
+from tasks.base.pipeline_base import SequentialPipeline
 
-app = Flask(__name__)
-worker = AIWorker()
-worker.initialize()
-
-@app.route('/process/<task_id>', methods=['POST'])
-def process_task(task_id):
-    input_data = request.json.get('input')
-    result = worker.process_task(task_id, input_data)
-    return jsonify(result)
-
-@app.route('/tasks', methods=['GET'])
-def list_tasks():
-    return jsonify(worker.list_tasks())
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+class MyPipeline(SequentialPipeline):
+    def get_tasks(self):
+        return ["face_detection", "emotion_recognition"]
+    
+    def execute_task(self, task_id, input_data):
+        from worker.task_registry import task_registry
+        return task_registry.submit_task(task_id, input_data)
 ```
 
-## 🔧 Advanced Configuration
+### Parallel Pipeline
 
-### Multiple Workers
+```python
+from tasks.base.pipeline_base import ParallelPipeline
+
+class MyParallelPipeline(ParallelPipeline):
+    def get_tasks(self):
+        return ["face_detection", "object_detection", "scene_classification"]
+    
+    def execute_task(self, task_id, input_data):
+        # Execute task
+        pass
+    
+    def process_parallel_results(self, task_results, input_data):
+        # Combine results
+        return combined_result
+```
+
+## 📊 Monitoring
+
+### Web Interfaces
+
+- **Flower (Celery)**: http://localhost:5555
+- **MinIO Console**: http://localhost:9001 (minioadmin/minioadmin123)
+
+### CLI Monitoring
+
+```bash
+# Real-time worker monitor
+python3 -m tools.worker_cli monitor
+
+# List all workers
+python3 -m tools.worker_cli workers
+
+# Execution history
+python3 -m tools.worker_cli executions --status failed
+```
+
+### Logs
+
+```bash
+# Worker logs
+tail -f logs/worker.log
+
+# Celery logs
+tail -f logs/celery.log
+
+# System logs
+tail -f logs/system.log
+```
+
+## ⚙️ Configuration
+
+### Worker Configuration (`config.json`)
+
 ```json
-// config_worker_2.json
 {
-  "worker_id": "worker_002",
-  "worker_name": "AI Worker Node 2",
-  "active_tasks": ["object_detection", "speech_recognition"]
+  "worker": {
+    "worker_id": "worker_001",
+    "max_concurrent_tasks": 5,
+    "active_tasks": ["face_detection", "text_sentiment"],
+    "task_configs": {
+      "face_detection": {
+        "queue": "vision",
+        "priority": 7,
+        "timeout": 120
+      }
+    }
+  }
 }
 ```
 
-### Production Settings
-```json
-{
-  "mongodb": {
-    "host": "mongodb.production.com",
-    "port": "27017",
-    "database": "ai_tasks_prod",
-    "username": "ai_user",
-    "password": "secure_password"
-  },
-  "minio": {
-    "endpoint": "s3.amazonaws.com", 
-    "access_key": "AWS_ACCESS_KEY",
-    "secret_key": "AWS_SECRET_KEY",
-    "bucket": "ai-tasks-prod",
-    "secure": true
-  },
-  "max_concurrent_tasks": 10
-}
+### Environment Variables
+
+```bash
+# Database
+export MONGODB_HOST=localhost
+export MONGODB_PASSWORD=admin123
+
+# Storage
+export MINIO_ACCESS_KEY=minioadmin
+export MINIO_SECRET_KEY=minioadmin123
+
+# Redis
+export REDIS_PASSWORD=redis123
+```
+
+## 🔐 Production Deployment
+
+### Security
+
+```bash
+# Generate secure passwords
+export MONGODB_PASSWORD=$(openssl rand -base64 32)
+export MINIO_SECRET_KEY=$(openssl rand -base64 32)
+export REDIS_PASSWORD=$(openssl rand -base64 32)
+```
+
+### Scaling
+
+```bash
+# Multiple workers
+python3 -m tools.worker_cli start --concurrency 10
+
+# Different queues
+python3 -m tools.worker_cli start --queues vision,nlp,ml
+```
+
+### Health Checks
+
+```bash
+# Automated health check
+*/5 * * * * cd /path/to/ai-task-worker && python3 -m tools.worker_cli health
 ```
 
 ## 🐛 Troubleshooting
 
-### Worker không load được task
-1. Check MongoDB connection: `python3 -c "from database import *; db = DatabaseManager(load_config()); print(db.connect())"`
-2. Check MinIO connection: `python3 -c "from storage import *; s = StorageManager(load_config()); print(s.connect())"`
-3. Check task exists: `python3 task_register.py list`
+### Common Issues
 
-### Task execution lỗi
-1. Check logs: `tail -f ai_worker.log`
-2. Check task requirements: Dependencies có được cài đủ không?
-3. Reload task: `worker.reload_task('task_id')`
+1. **Worker not starting**
+   ```bash
+   # Check services
+   docker-compose ps
+   python3 -m tools.worker_cli health
+   ```
 
-### Performance issues
-1. Tăng `max_concurrent_tasks`
-2. Setup multiple workers
-3. Cache tasks locally trong production
+2. **Task loading failed**
+   ```bash
+   # Check task cache
+   ls -la task_cache/
+   python3 -m tools.task_manager list
+   ```
 
-## 🎯 Key Benefits
+3. **Memory issues**
+   ```bash
+   # Monitor memory
+   python3 -m tools.worker_cli monitor
+   ```
 
-1. **Modular**: Dễ dàng thêm/xóa tasks
-2. **Scalable**: Multiple workers, load balancing
-3. **Persistent**: Task code stored in MinIO, metadata in MongoDB  
-4. **Flexible**: Config-driven task activation
-5. **Robust**: Error handling, execution history, logging
-6. **Production-ready**: Daemon mode, graceful shutdown, monitoring
+### Debug Mode
 
-Hệ thống này cho phép bạn dễ dàng deploy và quản lý hàng trăm AI tasks khác nhau chỉ bằng cách cập nhật config và restart worker!
+```bash
+# Enable debug logging
+export LOG_LEVEL=DEBUG
+python3 -m tools.worker_cli start --loglevel DEBUG
+```
+
+## 📚 Examples
+
+### Example Tasks Included
+
+1. **Face Detection** (`face_detection`)
+   - OpenCV Haar Cascades
+   - Input: Image path or numpy array
+   - Output: Bounding boxes và confidence scores
+
+2. **Text Sentiment** (`text_sentiment`)
+   - Rule-based sentiment analysis
+   - Input: Text string
+   - Output: Sentiment (positive/negative/neutral) với confidence
+
+### Testing Examples
+
+```bash
+# Test face detection
+python3 -m tools.task_manager test face_detection '"test_image.jpg"'
+
+# Test sentiment analysis
+python3 -m tools.task_manager test text_sentiment '"This is amazing!"'
+```
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open Pull Request
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- 📧 Email: support@example.com
+- 💬 Discord: [Join our server](https://discord.gg/example)
+- 📖 Documentation: [docs.example.com](https://docs.example.com)
+- 🐛 Issues: [GitHub Issues](https://github.com/example/ai-task-worker/issues)
+
+---
+
+**Happy AI Task Processing! 🚀**
