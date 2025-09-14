@@ -1,0 +1,5 @@
+# Worker Log File
+# This file contains worker-related logs including startup, shutdown, and task execution logs
+# Format: timestamp | level | message2025-09-14 13:53:44 | INFO     | WORKER | Worker logger test - this should appear in logs/worker.log
+2025-09-14 13:53:44 | WARNING  | WORKER | Worker warning message
+2025-09-14 13:53:44 | ERROR    | WORKER | Worker error message

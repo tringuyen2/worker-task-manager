@@ -11,7 +11,6 @@ import time
 import psutil
 from pathlib import Path
 from typing import List, Optional
-from loguru import logger
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -19,6 +18,7 @@ sys.path.insert(0, str(project_root))
 
 from core.config.manager import get_config
 from worker.task_registry import task_registry
+from core.logging import get_worker_logger, get_log_level, get_console_logging
 
 
 class WorkerManager:
@@ -151,8 +151,11 @@ def main():
 
     args = parser.parse_args()
 
-    # Configure logging
-    logger.add(sys.stdout, level=args.log_level)
+    # Configure logging using centralized logger config
+    logger = get_worker_logger(
+        level=args.log_level,
+        console=get_console_logging()
+    )
 
     manager = WorkerManager()
 

@@ -20,6 +20,7 @@ sys.path.insert(0, str(project_root))
 from pipeline.registry import pipeline_registry
 from worker.task_registry import task_registry
 from core.config.manager import get_config
+from core.logging import get_logger
 
 console = Console()
 

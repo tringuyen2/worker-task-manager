@@ -1,0 +1,4 @@
+# System Log File
+# This file contains system-wide logs including database operations, service health checks, and general system events
+# Format: timestamp | level | message2025-09-14 13:53:44 | INFO     | SYSTEM | System logger test - this should appear in logs/system.log
+2025-09-14 13:53:44 | INFO     | DEMO | Demo logger test - this should appear in logs/system.log

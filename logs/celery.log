@@ -1,0 +1,3 @@
+# Celery Log File
+# This file contains Celery-specific logs including task execution, queue management, and worker communication
+# Format: timestamp | level | message

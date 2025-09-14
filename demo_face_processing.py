@@ -12,10 +12,10 @@ from pathlib import Path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from loguru import logger
 from pipeline.registry import pipeline_registry
 from worker.task_registry import task_registry
 from core.config.manager import get_config
+from core.logging import get_logger
 
 
 def demo_pipeline_registration():
@@ -165,9 +165,8 @@ def main():
     print("====================================")
 
     try:
-        # Configure logging
-        logger.remove()
-        logger.add(sys.stdout, level="INFO", format="{time:HH:mm:ss} | {level} | {message}")
+        # Configure logging using centralized config
+        logger = get_logger("DEMO", level="INFO", console=True)
 
         # Run demos
         demo_pipeline_registration()
