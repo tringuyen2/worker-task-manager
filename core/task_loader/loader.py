@@ -180,6 +180,11 @@ class TaskLoader:
                 with open(task_config_file, 'r') as f:
                     task_config = json.load(f)
             
+            # Add project root to sys.path to enable absolute imports
+            project_root = str(Path(__file__).parent.parent.parent)
+            if project_root not in sys.path:
+                sys.path.insert(0, project_root)
+            
             # Dynamic import
             spec = importlib.util.spec_from_file_location("task_module", task_file)
             task_module = importlib.util.module_from_spec(spec)

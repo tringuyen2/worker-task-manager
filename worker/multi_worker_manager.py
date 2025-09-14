@@ -40,12 +40,12 @@ class TaskWorker:
             ]
             
             # Add memory limit if specified
-            if 'memory_limit' in self.config:
-                cmd.extend(['--max-memory-per-child', self.config['memory_limit']])
+            if 'memory_limit' in self.config and self.config['memory_limit'] is not None:
+                cmd.extend(['--max-memory-per-child', str(self.config['memory_limit'])])
             
             # Add task timeout
-            if 'timeout' in self.config:
-                cmd.extend(['--task-time-limit', str(self.config['timeout'])])
+            if 'timeout' in self.config and self.config['timeout'] is not None:
+                cmd.extend(['--time-limit', str(self.config['timeout'])])
             
             logger.info(f"Starting worker for task {self.task_id}: {' '.join(cmd)}")
             
@@ -141,13 +141,17 @@ class MultiWorkerManager:
         # Fallback to default task config
         task_config = self.config.worker.task_configs.get(task_id)
         if task_config:
-            return {
+            config = {
                 "queue": getattr(task_config, 'queue', task_id),
                 "concurrency": 1,
                 "timeout": getattr(task_config, 'timeout', 300),
-                "memory_limit": getattr(task_config, 'memory_limit', None),
                 "log_level": "INFO"
             }
+            # Only add memory_limit if it exists and is not None
+            memory_limit = getattr(task_config, 'memory_limit', None)
+            if memory_limit is not None:
+                config["memory_limit"] = memory_limit
+            return config
         
         # Default config
         return {

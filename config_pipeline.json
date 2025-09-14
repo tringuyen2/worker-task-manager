@@ -1,0 +1,169 @@
+{
+  "pipelines": {
+    "face_processing_pipeline": {
+      "pipeline_id": "face_processing_pipeline",
+      "name": "Face Processing Pipeline",
+      "description": "Detect faces and extract attributes/features in parallel",
+      "enabled": true,
+      "steps": [
+        {
+          "task_id": "face_detection",
+          "timeout": 30,
+          "retry_count": 3,
+          "depends_on": null,
+          "parallel_group": null
+        },
+        {
+          "task_id": "face_attribute",
+          "timeout": 15,
+          "retry_count": 2,
+          "depends_on": ["face_detection"],
+          "parallel_group": "face_analysis"
+        },
+        {
+          "task_id": "face_extractor",
+          "timeout": 20,
+          "retry_count": 2,
+          "depends_on": ["face_detection"],
+          "parallel_group": "face_analysis"
+        }
+      ],
+      "input_validation": {
+        "required_fields": ["image_path"],
+        "optional_fields": ["image_data"],
+        "supported_formats": ["jpg", "png", "bmp", "tiff"]
+      },
+      "output_format": {
+        "type": "object",
+        "properties": {
+          "faces": "array of face objects with attributes and features",
+          "processing_summary": "summary statistics"
+        }
+      },
+      "metadata": {
+        "author": "AI Worker System",
+        "version": "1.0.0",
+        "created": "2025-01-14",
+        "tags": ["computer_vision", "face_processing", "parallel"]
+      }
+    },
+    "simple_face_pipeline": {
+      "pipeline_id": "simple_face_pipeline",
+      "name": "Simple Face Detection Pipeline",
+      "description": "Basic face detection without attribute analysis",
+      "enabled": true,
+      "steps": [
+        {
+          "task_id": "face_detection",
+          "timeout": 30,
+          "retry_count": 3,
+          "depends_on": null,
+          "parallel_group": null
+        }
+      ],
+      "input_validation": {
+        "required_fields": ["image_path"],
+        "optional_fields": ["image_data"],
+        "supported_formats": ["jpg", "png", "bmp", "tiff"]
+      },
+      "output_format": {
+        "type": "object",
+        "properties": {
+          "faces": "array of detected face bounding boxes",
+          "face_count": "number of faces detected"
+        }
+      },
+      "metadata": {
+        "author": "AI Worker System",
+        "version": "1.0.0",
+        "created": "2025-01-14",
+        "tags": ["computer_vision", "face_detection"]
+      }
+    },
+    "text_analysis_pipeline": {
+      "pipeline_id": "text_analysis_pipeline",
+      "name": "Text Analysis Pipeline",
+      "description": "Analyze text sentiment and extract features",
+      "enabled": false,
+      "steps": [
+        {
+          "task_id": "text_preprocessing",
+          "timeout": 10,
+          "retry_count": 2,
+          "depends_on": null,
+          "parallel_group": null
+        },
+        {
+          "task_id": "text_sentiment",
+          "timeout": 15,
+          "retry_count": 2,
+          "depends_on": ["text_preprocessing"],
+          "parallel_group": "text_analysis"
+        },
+        {
+          "task_id": "text_features",
+          "timeout": 20,
+          "retry_count": 2,
+          "depends_on": ["text_preprocessing"],
+          "parallel_group": "text_analysis"
+        }
+      ],
+      "input_validation": {
+        "required_fields": ["text"],
+        "optional_fields": ["language", "context"],
+        "supported_formats": ["plain_text", "json"]
+      },
+      "output_format": {
+        "type": "object",
+        "properties": {
+          "sentiment": "sentiment analysis results",
+          "features": "extracted text features",
+          "summary": "analysis summary"
+        }
+      },
+      "metadata": {
+        "author": "AI Worker System",
+        "version": "1.0.0",
+        "created": "2025-01-14",
+        "tags": ["nlp", "text_analysis", "parallel"]
+      }
+    }
+  },
+  "global_settings": {
+    "default_timeout": 300,
+    "default_retry_count": 3,
+    "max_parallel_tasks": 10,
+    "enable_caching": true,
+    "log_level": "INFO"
+  },
+  "input_processors": {
+    "image_input": {
+      "supported_types": ["file_path", "base64", "numpy_array"],
+      "validation_rules": {
+        "max_file_size_mb": 50,
+        "min_dimensions": [32, 32],
+        "max_dimensions": [4096, 4096]
+      }
+    },
+    "text_input": {
+      "supported_types": ["string", "json"],
+      "validation_rules": {
+        "max_length": 10000,
+        "min_length": 1,
+        "encoding": "utf-8"
+      }
+    }
+  },
+  "output_processors": {
+    "face_results": {
+      "format": "json",
+      "include_metadata": true,
+      "compression": false
+    },
+    "text_results": {
+      "format": "json",
+      "include_metadata": true,
+      "compression": true
+    }
+  }
+}

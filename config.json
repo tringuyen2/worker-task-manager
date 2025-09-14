@@ -46,7 +46,8 @@
       "face_extractor"
     ],
     "active_pipelines": [
-      "image_processing_pipeline"
+      "image_processing_pipeline",
+      "face_processing_pipeline"
     ],
     "task_configs": {
       "face_detection": {
@@ -106,6 +107,20 @@
         "priority": 5,
         "parallel": false,
         "fail_fast": true
+      },
+      "face_processing_pipeline": {
+        "pipeline_id": "face_processing_pipeline",
+        "enabled": true,
+        "tasks": [
+          "face_detection",
+          "face_attribute",
+          "face_extractor"
+        ],
+        "queue": "face_processing",
+        "priority": 7,
+        "parallel": true,
+        "fail_fast": false,
+        "timeout": 120
       }
     },
     "task_cache_dir": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache",

@@ -68,7 +68,7 @@ class TaskRouter:
             logger.info(f"Executing task {task_id} synchronously")
             
             # Load and execute task directly (bypass worker for demo)
-            from ..core.task_loader.loader import task_loader
+            from core.task_loader.loader import task_loader
             task_instance = task_loader.load_task(task_id)
             
             if not task_instance:
@@ -294,9 +294,17 @@ class PipelineExecutor:
             
             # For each detected face, run attribute analysis and feature extraction
             for i, face in enumerate(faces):
+                # Extract the image path from input_data
+                if isinstance(input_data, dict) and "image_path" in input_data:
+                    image_source = input_data["image_path"]
+                elif isinstance(input_data, str):
+                    image_source = input_data
+                else:
+                    image_source = input_data
+
                 face_region_data = {
                     "face_bbox": face.get("bbox"),
-                    "original_image": input_data,
+                    "original_image": image_source,
                     "face_index": i
                 }
                 

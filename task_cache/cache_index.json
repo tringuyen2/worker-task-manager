@@ -1,18 +1,18 @@
 {
   "simple_face_detector": {
-    "cached_at": "2025-09-14T05:22:10.901978",
+    "cached_at": "2025-09-14T05:54:15.857440",
     "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\simple_face_detector"
   },
   "face_detection": {
-    "cached_at": "2025-09-14T05:22:10.843760",
+    "cached_at": "2025-09-14T06:10:52.965119",
     "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\face_detection"
   },
   "face_attribute": {
-    "cached_at": "2025-09-14T05:22:10.969945",
+    "cached_at": "2025-09-14T05:56:41.420065",
     "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\face_attribute"
   },
   "face_extractor": {
-    "cached_at": "2025-09-14T05:22:11.027503",
+    "cached_at": "2025-09-14T05:56:41.446690",
     "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\face_extractor"
   }
 }
