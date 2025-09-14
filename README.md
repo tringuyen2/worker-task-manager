@@ -590,12 +590,35 @@ python3 -m tools.task_manager list
 ls -la task_cache/
 python3 -c "import json; print(json.load(open('task_cache/cache_index.json')))"
 
-# Test specific existing tasks
+# Test specific existing tasks (may have Unicode display issues on Windows)
 python3 -m tools.task_manager test face_detection '"test.jpg"'
 python3 -m tools.task_manager test simple_face_detector '"test.jpg"'
 
 # Check task information
 python3 -m tools.task_manager info face_detection
+```
+
+#### Known Issues & Status
+
+**✅ Fully Working:**
+- Individual task execution (face_detection, simple_face_detector, etc.)
+- simple_face_pipeline (single-step face detection)
+- Built-in face_processing_pipeline (via demo scripts)
+- Task registration and caching
+- MinIO/MongoDB/Redis integration
+- Logging system
+- Worker startup and monitoring
+
+**⚠️ Partial Issues:**
+- JSON-configured face_processing_pipeline: Face detection works, but parallel steps (face_attribute, face_extractor) fail due to missing image data passing
+- Unicode display issues on Windows console (✓/✗ characters)
+
+**🔧 Workarounds:**
+```bash
+# Instead of: python3 -m tools.pipeline_cli_registry execute face_processing_pipeline '{"image_path": "test.jpg"}'
+# Use: python demo_face_processing.py  (This works perfectly!)
+
+# For individual tasks, core functionality works despite display issues
 ```
 
 #### Image File Issues
@@ -660,20 +683,25 @@ except Exception as e:
 
 ## 🏃‍♂️ 30-Second Quick Start
 
-Want to see the system in action immediately? Run these commands:
+Want to see the system in action immediately? Run these **guaranteed working** commands:
 
 ```bash
-# 1. Test a simple task (no setup required)
-python3 -m tools.task_manager test face_detection '"test.jpg"'
-
-# 2. Execute a complete pipeline (no workers needed)
+# 1. ✅ WORKING: Simple face detection pipeline
 python3 -m tools.pipeline_cli_registry execute simple_face_pipeline '{"image_path": "test.jpg"}'
 
-# 3. Run the full demo
+# 2. ✅ WORKING: Full face processing demo (includes parallel processing)
 python demo_face_processing.py
+
+# 3. ✅ WORKING: Individual face detection task
+python simple_registration_demo.py
 ```
 
-**Expected:** You should see face detection results with bounding boxes and confidence scores in under 30 seconds!
+**Expected Results:**
+- ✅ **simple_face_pipeline**: Face detection with bounding boxes in ~1-2s
+- ✅ **demo script**: Complete pipeline with face attributes & features in ~0.12s
+- ✅ **registration demo**: Task registration and execution demonstration
+
+**⚠️ Known Issue:** The JSON-configured `face_processing_pipeline` has face detection working but attribute/feature extraction fails due to data passing limitations.
 
 ## 📚 Quick Start Scripts
 
@@ -849,52 +877,66 @@ python3 -m tools.pipeline_cli_registry execute simple_face_pipeline '{"image_pat
 ```
 
 #### Complete Face Processing Pipeline
+
+**⚠️ Current Status**: The JSON-configured pipeline (face_processing_pipeline from config_pipeline.json) has face detection working, but face_attribute and face_extractor steps fail due to missing image data passing logic.
+
 ```bash
-# Execute full face processing pipeline (parallel execution)
+# Execute full face processing pipeline (face detection works, attributes/features partially fail)
 python3 -m tools.pipeline_cli_registry execute face_processing_pipeline '{"image_path": "test.jpg"}'
 ```
-**Expected Output:**
+
+**Current Output:**
 ```json
 {
   "pipeline_id": "face_processing_pipeline",
   "status": "completed",
-  "execution_time": 1.8,
-  "parallel_execution": true,
+  "execution_time": 1.4,
   "results": {
     "faces": [
       {
-        "face_id": "face_001",
-        "bbox": [120, 80, 180, 220],
-        "confidence": 0.95,
-        "attributes": {
-          "age": 25,
-          "gender": "male",
-          "emotion": "happy"
-        },
-        "features": [0.1, 0.2, 0.3, ...],
-        "feature_dimension": 512
+        "face_id": 0,
+        "bbox": [84, 24, 78, 78],
+        "confidence": 1.0,
+        "attributes": null,  // ⚠️ Failed - missing image data
+        "features": null     // ⚠️ Failed - missing image data
       }
     ],
     "processing_summary": {
       "total_faces_detected": 1,
-      "faces_with_attributes": 1,
-      "faces_with_features": 1,
-      "parallel_processing": true
+      "faces_with_attributes": 0,    // ⚠️ Should be 1
+      "faces_with_features": 0       // ⚠️ Should be 1
     }
   }
 }
 ```
 
+**✅ Working Alternative - Use Demo Script:**
+```bash
+# This works perfectly with full parallel processing!
+python demo_face_processing.py
+```
+
+**Demo Script Output (Working):**
+- ✅ Face detection: Found 1 face
+- ✅ Face attributes: Completed for face 0
+- ✅ Face features: Completed for face 0
+- ✅ Parallel execution: 0.12s total time
+
 ### 📊 Performance Benchmarks (Using test.jpg)
 
-| Operation | Execution Time | Notes |
-|-----------|---------------|--------|
-| Individual face_detection | 0.3-0.5s | OpenCV Haar cascades |
-| Individual face_attribute | 0.2-0.4s | Age, gender, emotion detection |
-| Individual face_extractor | 0.4-0.6s | 512-dimensional feature vector |
-| simple_face_pipeline | 0.3-0.5s | Single task execution |
-| face_processing_pipeline | 0.5-0.8s | Parallel execution of 3 tasks |
-| face_processing_pipeline (workers) | 0.4-0.6s | Celery distributed execution |
+| Operation | Status | Execution Time | Notes |
+|-----------|--------|---------------|--------|
+| Individual face_detection | ✅ Working | 0.3-0.5s | OpenCV Haar cascades |
+| simple_face_pipeline | ✅ Working | 1.2-1.5s | Face detection via CLI |
+| Built-in face_processing_pipeline | ✅ Working | 0.12s | Demo script with parallel execution |
+| JSON face_processing_pipeline | ⚠️ Partial | 1.4s | Face detection works, attributes/features fail |
+| Individual face_attribute | ⚠️ See notes | 0.2-0.4s | Works in demo, fails in JSON pipeline |
+| Individual face_extractor | ⚠️ See notes | 0.4-0.6s | Works in demo, fails in JSON pipeline |
+
+**Legend:**
+- ✅ **Working**: Fully functional, recommended for use
+- ⚠️ **Partial**: Core functionality works with some limitations
+- ❌ **Not Working**: Currently not functional
 
 ## 🤝 Contributing
 

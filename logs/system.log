@@ -2,3 +2,132 @@
 # This file contains system-wide logs including database operations, service health checks, and general system events
 # Format: timestamp | level | message2025-09-14 13:53:44 | INFO     | SYSTEM | System logger test - this should appear in logs/system.log
 2025-09-14 13:53:44 | INFO     | DEMO | Demo logger test - this should appear in logs/system.log
+2025-09-14 14:09:44 | INFO     | DEMO | Registered pipeline: face_processing_pipeline
+2025-09-14 14:09:44 | INFO     | DEMO | Registered built-in pipelines
+2025-09-14 14:09:44 | INFO     | DEMO | Connected to MongoDB: localhost:27017/ai_tasks
+2025-09-14 14:09:44 | INFO     | DEMO | Downloading task from storage: face_detection
+2025-09-14 14:09:44 | INFO     | DEMO | Connected to MinIO: localhost:9000/ai-tasks
+2025-09-14 14:09:44 | INFO     | DEMO | Downloaded and extracted pipeline package to: F:\Viettel\Sources\worker-task-manager-v2\task_cache\face_detection
+2025-09-14 14:09:45 | INFO     | DEMO | Installed requirements from F:\Viettel\Sources\worker-task-manager-v2\task_cache\face_detection\requirements.txt
+2025-09-14 14:09:45 | INFO     | DEMO | Task validation passed: face_detection
+2025-09-14 14:09:45 | INFO     | DEMO | Successfully loaded task: face_detection
+2025-09-14 14:09:45 | INFO     | DEMO | Registered task: face_detection on queue: face_detection
+2025-09-14 14:09:45 | ERROR    | DEMO | Task metadata not found: text_sentiment
+2025-09-14 14:09:45 | ERROR    | DEMO | Failed to load task: text_sentiment
+2025-09-14 14:09:45 | INFO     | DEMO | Downloading task from storage: simple_face_detector
+2025-09-14 14:09:45 | INFO     | DEMO | Downloaded and extracted pipeline package to: F:\Viettel\Sources\worker-task-manager-v2\task_cache\simple_face_detector
+2025-09-14 14:09:45 | INFO     | DEMO | Task validation passed: simple_face_detector
+2025-09-14 14:09:45 | INFO     | DEMO | Successfully loaded task: simple_face_detector
+2025-09-14 14:09:45 | INFO     | DEMO | Registered task: simple_face_detector on queue: default
+2025-09-14 14:09:45 | INFO     | DEMO | Downloading task from storage: face_attribute
+2025-09-14 14:09:45 | INFO     | DEMO | Downloaded and extracted pipeline package to: F:\Viettel\Sources\worker-task-manager-v2\task_cache\face_attribute
+2025-09-14 14:09:45 | INFO     | DEMO | Task validation passed: face_attribute
+2025-09-14 14:09:45 | INFO     | DEMO | Successfully loaded task: face_attribute
+2025-09-14 14:09:45 | INFO     | DEMO | Registered task: face_attribute on queue: face_attribute
+2025-09-14 14:09:45 | INFO     | DEMO | Downloading task from storage: face_extractor
+2025-09-14 14:09:46 | INFO     | DEMO | Downloaded and extracted pipeline package to: F:\Viettel\Sources\worker-task-manager-v2\task_cache\face_extractor
+2025-09-14 14:09:46 | INFO     | DEMO | Task validation passed: face_extractor
+2025-09-14 14:09:46 | INFO     | DEMO | Successfully loaded task: face_extractor
+2025-09-14 14:09:46 | INFO     | DEMO | Registered task: face_extractor on queue: face_extractor
+2025-09-14 14:09:46 | ERROR    | DEMO | Pipeline metadata not found: image_processing_pipeline
+2025-09-14 14:09:46 | ERROR    | DEMO | Failed to load pipeline: image_processing_pipeline
+2025-09-14 14:09:46 | ERROR    | DEMO | Pipeline metadata not found: face_processing_pipeline
+2025-09-14 14:09:46 | ERROR    | DEMO | Failed to load pipeline: face_processing_pipeline
+2025-09-14 14:09:46 | INFO     | DEMO | Registered pipeline: face_processing_pipeline
+2025-09-14 14:09:46 | INFO     | DEMO | Registered built-in pipelines
+2025-09-14 14:09:46 | INFO     | DEMO | Registered task: face_detection on queue: face_detection
+2025-09-14 14:09:46 | ERROR    | DEMO | Task metadata not found: text_sentiment
+2025-09-14 14:09:46 | ERROR    | DEMO | Failed to load task: text_sentiment
+2025-09-14 14:09:46 | INFO     | DEMO | Registered task: simple_face_detector on queue: default
+2025-09-14 14:09:46 | INFO     | DEMO | Registered task: face_attribute on queue: face_attribute
+2025-09-14 14:09:46 | INFO     | DEMO | Registered task: face_extractor on queue: face_extractor
+2025-09-14 14:09:46 | ERROR    | DEMO | Pipeline metadata not found: image_processing_pipeline
+2025-09-14 14:09:46 | ERROR    | DEMO | Failed to load pipeline: image_processing_pipeline
+2025-09-14 14:09:46 | ERROR    | DEMO | Pipeline metadata not found: face_processing_pipeline
+2025-09-14 14:09:46 | ERROR    | DEMO | Failed to load pipeline: face_processing_pipeline
+2025-09-14 14:09:46 | INFO     | DEMO | Starting pipeline execution: face_processing_pipeline [c98ab2c6-6025-4878-9dbf-bd41481a3e06]
+2025-09-14 14:09:46 | INFO     | DEMO | Executing step: face_detection
+2025-09-14 14:09:46 | INFO     | DEMO | Executing task face_detection synchronously
+2025-09-14 14:09:46 | INFO     | DEMO | [face_detection] Loading Haar Cascade face detection model...
+2025-09-14 14:09:46 | INFO     | DEMO | [face_detection] Face detection model loaded successfully
+2025-09-14 14:09:46 | INFO     | DEMO | [face_detection] Starting face detection...
+2025-09-14 14:09:46 | INFO     | DEMO | [face_detection] Preprocessing input image...
+2025-09-14 14:09:46 | INFO     | DEMO | [face_detection] Image preprocessed: (148, 242, 3)
+2025-09-14 14:09:46 | INFO     | DEMO | [face_detection] Postprocessing detection results...
+2025-09-14 14:09:46 | INFO     | DEMO | [face_detection] Face detection completed - found 1 faces
+2025-09-14 14:09:46 | INFO     | DEMO | [face_detection] Face detection resources cleaned up
+2025-09-14 14:09:46 | INFO     | DEMO | Executing parallel group 'face_analysis' with 2 steps
+2025-09-14 14:09:46 | INFO     | DEMO | Executing step: face_attribute
+2025-09-14 14:09:46 | INFO     | DEMO | Executing task face_attribute synchronously
+2025-09-14 14:09:46 | INFO     | DEMO | [face_attribute] Starting face attribute analysis...
+2025-09-14 14:09:46 | INFO     | DEMO | Executing step: face_extractor
+2025-09-14 14:09:46 | INFO     | DEMO | [face_attribute] Face attribute analysis completed for face 0
+2025-09-14 14:09:46 | INFO     | DEMO | Executing task face_extractor synchronously
+2025-09-14 14:09:46 | INFO     | DEMO | [face_extractor] Starting face feature extraction...
+2025-09-14 14:09:46 | INFO     | DEMO | [face_extractor] Face feature extraction completed for face 0
+2025-09-14 14:09:46 | INFO     | DEMO | Pipeline execution completed: face_processing_pipeline [c98ab2c6-6025-4878-9dbf-bd41481a3e06] in 0.12s
+2025-09-14 14:09:46 | ERROR    | DEMO | Demo failed: 'charmap' codec can't encode character '\u2713' in position 0: character maps to <undefined>
+2025-09-14 14:11:51 | INFO     | DEMO | Registered pipeline: face_processing_pipeline
+2025-09-14 14:11:51 | INFO     | DEMO | Registered built-in pipelines
+2025-09-14 14:11:51 | INFO     | DEMO | Connected to MongoDB: localhost:27017/ai_tasks
+2025-09-14 14:11:51 | INFO     | DEMO | Downloading task from storage: face_detection
+2025-09-14 14:11:51 | INFO     | DEMO | Connected to MinIO: localhost:9000/ai-tasks
+2025-09-14 14:11:51 | INFO     | DEMO | Downloaded and extracted pipeline package to: F:\Viettel\Sources\worker-task-manager-v2\task_cache\face_detection
+2025-09-14 14:11:52 | INFO     | DEMO | Installed requirements from F:\Viettel\Sources\worker-task-manager-v2\task_cache\face_detection\requirements.txt
+2025-09-14 14:11:52 | INFO     | DEMO | Task validation passed: face_detection
+2025-09-14 14:11:52 | INFO     | DEMO | Successfully loaded task: face_detection
+2025-09-14 14:11:52 | INFO     | DEMO | Registered task: face_detection on queue: face_detection
+2025-09-14 14:11:52 | ERROR    | DEMO | Task metadata not found: text_sentiment
+2025-09-14 14:11:52 | ERROR    | DEMO | Failed to load task: text_sentiment
+2025-09-14 14:11:52 | INFO     | DEMO | Downloading task from storage: simple_face_detector
+2025-09-14 14:11:52 | INFO     | DEMO | Downloaded and extracted pipeline package to: F:\Viettel\Sources\worker-task-manager-v2\task_cache\simple_face_detector
+2025-09-14 14:11:52 | INFO     | DEMO | Task validation passed: simple_face_detector
+2025-09-14 14:11:52 | INFO     | DEMO | Successfully loaded task: simple_face_detector
+2025-09-14 14:11:52 | INFO     | DEMO | Registered task: simple_face_detector on queue: default
+2025-09-14 14:11:52 | INFO     | DEMO | Downloading task from storage: face_attribute
+2025-09-14 14:11:52 | INFO     | DEMO | Downloaded and extracted pipeline package to: F:\Viettel\Sources\worker-task-manager-v2\task_cache\face_attribute
+2025-09-14 14:11:52 | INFO     | DEMO | Task validation passed: face_attribute
+2025-09-14 14:11:52 | INFO     | DEMO | Successfully loaded task: face_attribute
+2025-09-14 14:11:52 | INFO     | DEMO | Registered task: face_attribute on queue: face_attribute
+2025-09-14 14:11:52 | INFO     | DEMO | Downloading task from storage: face_extractor
+2025-09-14 14:11:52 | INFO     | DEMO | Downloaded and extracted pipeline package to: F:\Viettel\Sources\worker-task-manager-v2\task_cache\face_extractor
+2025-09-14 14:11:52 | INFO     | DEMO | Task validation passed: face_extractor
+2025-09-14 14:11:52 | INFO     | DEMO | Successfully loaded task: face_extractor
+2025-09-14 14:11:52 | INFO     | DEMO | Registered task: face_extractor on queue: face_extractor
+2025-09-14 14:11:52 | ERROR    | DEMO | Pipeline metadata not found: image_processing_pipeline
+2025-09-14 14:11:52 | ERROR    | DEMO | Failed to load pipeline: image_processing_pipeline
+2025-09-14 14:11:52 | ERROR    | DEMO | Pipeline metadata not found: face_processing_pipeline
+2025-09-14 14:11:52 | ERROR    | DEMO | Failed to load pipeline: face_processing_pipeline
+2025-09-14 14:11:52 | INFO     | DEMO | Registered pipeline: face_processing_pipeline
+2025-09-14 14:11:52 | INFO     | DEMO | Registered built-in pipelines
+2025-09-14 14:11:52 | INFO     | DEMO | Registered task: face_detection on queue: face_detection
+2025-09-14 14:11:52 | ERROR    | DEMO | Task metadata not found: text_sentiment
+2025-09-14 14:11:52 | ERROR    | DEMO | Failed to load task: text_sentiment
+2025-09-14 14:11:52 | INFO     | DEMO | Registered task: simple_face_detector on queue: default
+2025-09-14 14:11:52 | INFO     | DEMO | Registered task: face_attribute on queue: face_attribute
+2025-09-14 14:11:52 | INFO     | DEMO | Registered task: face_extractor on queue: face_extractor
+2025-09-14 14:11:52 | ERROR    | DEMO | Pipeline metadata not found: image_processing_pipeline
+2025-09-14 14:11:52 | ERROR    | DEMO | Failed to load pipeline: image_processing_pipeline
+2025-09-14 14:11:52 | ERROR    | DEMO | Pipeline metadata not found: face_processing_pipeline
+2025-09-14 14:11:52 | ERROR    | DEMO | Failed to load pipeline: face_processing_pipeline
+2025-09-14 14:11:52 | INFO     | DEMO | Starting pipeline execution: face_processing_pipeline [26e4195b-aed6-4616-a002-1a74ad6ef944]
+2025-09-14 14:11:52 | INFO     | DEMO | Executing step: face_detection
+2025-09-14 14:11:52 | INFO     | DEMO | Executing task face_detection synchronously
+2025-09-14 14:11:52 | INFO     | DEMO | [face_detection] Loading Haar Cascade face detection model...
+2025-09-14 14:11:52 | INFO     | DEMO | [face_detection] Face detection model loaded successfully
+2025-09-14 14:11:52 | INFO     | DEMO | [face_detection] Starting face detection...
+2025-09-14 14:11:52 | INFO     | DEMO | [face_detection] Preprocessing input image...
+2025-09-14 14:11:52 | INFO     | DEMO | [face_detection] Image preprocessed: (148, 242, 3)
+2025-09-14 14:11:52 | INFO     | DEMO | [face_detection] Postprocessing detection results...
+2025-09-14 14:11:52 | INFO     | DEMO | [face_detection] Face detection completed - found 1 faces
+2025-09-14 14:11:52 | INFO     | DEMO | [face_detection] Face detection resources cleaned up
+2025-09-14 14:11:52 | INFO     | DEMO | Executing parallel group 'face_analysis' with 2 steps
+2025-09-14 14:11:52 | INFO     | DEMO | Executing step: face_attribute
+2025-09-14 14:11:52 | INFO     | DEMO | Executing step: face_extractor
+2025-09-14 14:11:52 | INFO     | DEMO | Executing task face_attribute synchronously
+2025-09-14 14:11:52 | INFO     | DEMO | [face_attribute] Starting face attribute analysis...
+2025-09-14 14:11:52 | INFO     | DEMO | Executing task face_extractor synchronously
+2025-09-14 14:11:52 | INFO     | DEMO | [face_extractor] Starting face feature extraction...
+2025-09-14 14:11:52 | INFO     | DEMO | [face_attribute] Face attribute analysis completed for face 0
+2025-09-14 14:11:52 | INFO     | DEMO | [face_extractor] Face feature extraction completed for face 0
+2025-09-14 14:11:52 | INFO     | DEMO | Pipeline execution completed: face_processing_pipeline [26e4195b-aed6-4616-a002-1a74ad6ef944] in 0.12s
