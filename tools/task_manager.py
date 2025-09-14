@@ -184,6 +184,7 @@ def register(task_folder, task_id, validate_only):
                 console.print("[red]Failed to save task metadata[/red]")
         
     except Exception as e:
+        raise
         console.print(f"[red]Failed to register task: {e}[/red]")
 
 

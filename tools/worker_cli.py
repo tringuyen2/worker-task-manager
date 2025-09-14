@@ -16,9 +16,9 @@ from rich.live import Live
 from rich.progress import Progress
 from loguru import logger
 
-from ..core.config.manager import get_config, config_manager
-from ..core.database.operations import db_ops
-from ..worker.task_registry import task_registry
+from core.config.manager import get_config, config_manager
+from core.database.operations import db_ops
+from worker.task_registry import task_registry
 
 console = Console()
 
@@ -43,8 +43,9 @@ def start(daemon, loglevel, queues, concurrency):
         
         # Build Celery command
         cmd = [
-            sys.executable, '-m', 'celery', 'worker',
-            '-A', 'worker.celery_app:celery_app',
+            sys.executable, '-m', 'celery', 
+            '-A', 'worker.celery_app:celery_app',  # Move -A before worker
+            'worker',
             '--loglevel', loglevel
         ]
         

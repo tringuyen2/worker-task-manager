@@ -29,6 +29,7 @@ class DatabaseOperations:
             logger.info(f"Task metadata created: {task_metadata.task_id}")
             return bool(result.inserted_id)
         except Exception as e:
+            # raise
             logger.error(f"Failed to create task metadata {task_metadata.task_id}: {e}")
             return False
     
@@ -37,7 +38,7 @@ class DatabaseOperations:
         try:
             collection = self.conn.get_collection("task_metadata")
             doc = collection.find_one({"task_id": task_id})
-            return TaskMetadata(**doc) if doc else None
+            return TaskMetadata(**doc) if doc is not None else None
         except Exception as e:
             logger.error(f"Failed to get task metadata {task_id}: {e}")
             return None
@@ -100,7 +101,7 @@ class DatabaseOperations:
         try:
             collection = self.conn.get_collection("pipeline_metadata")
             doc = collection.find_one({"pipeline_id": pipeline_id})
-            return PipelineMetadata(**doc) if doc else None
+            return PipelineMetadata(**doc) if doc is not None else None
         except Exception as e:
             logger.error(f"Failed to get pipeline metadata {pipeline_id}: {e}")
             return None
@@ -175,7 +176,7 @@ class DatabaseOperations:
         try:
             collection = self.conn.get_collection("execution_records")
             doc = collection.find_one({"execution_id": execution_id})
-            return ExecutionRecord(**doc) if doc else None
+            return ExecutionRecord(**doc) if doc is not None else None
         except Exception as e:
             logger.error(f"Failed to get execution record {execution_id}: {e}")
             return None
@@ -228,7 +229,7 @@ class DatabaseOperations:
         try:
             collection = self.conn.get_collection("worker_status")
             doc = collection.find_one({"worker_id": worker_id})
-            return WorkerStatus(**doc) if doc else None
+            return WorkerStatus(**doc) if doc is not None else None
         except Exception as e:
             logger.error(f"Failed to get worker status {worker_id}: {e}")
             return None

@@ -6,10 +6,10 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime
 from loguru import logger
 
-from ..core.config.manager import get_config
-from ..core.task_loader.loader import task_loader
-from ..core.database.operations import db_ops
-from ..core.database.models import ExecutionRecord, TaskStatus, TaskType
+from core.config.manager import get_config
+from core.task_loader.loader import task_loader
+from core.database.operations import db_ops
+from core.database.models import ExecutionRecord, TaskStatus, TaskType
 
 
 class PipelineExecutor:

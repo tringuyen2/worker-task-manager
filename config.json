@@ -15,20 +15,21 @@
       "access_key": "minioadmin",
       "secret_key": "minioadmin",
       "bucket": "ai-tasks",
-      "secure": false,
-      "region": null
+      "secure": false
     },
     "redis": {
-      "host": "localhost",
-      "port": 6379,
+      "host": "redis-18836.c8.us-east-1-3.ec2.redns.redis-cloud.com",
+      "port": 18836,
       "db": 0,
-      "password": "redis123"
+      "password": "DpkPyBQpt4ZJz5t8IDxgm7LjAMZggO5m"
     },
     "celery": {
-      "broker_url": null,
-      "result_backend": null,
+      "broker_url": "redis://:DpkPyBQpt4ZJz5t8IDxgm7LjAMZggO5m@redis-18836.c8.us-east-1-3.ec2.redns.redis-cloud.com:18836/0",
+      "result_backend": "redis://:DpkPyBQpt4ZJz5t8IDxgm7LjAMZggO5m@redis-18836.c8.us-east-1-3.ec2.redns.redis-cloud.com:18836/0",
       "task_serializer": "json",
-      "accept_content": ["json"],
+      "accept_content": [
+        "json"
+      ],
       "result_serializer": "json",
       "timezone": "UTC",
       "enable_utc": true,
@@ -39,7 +40,10 @@
     },
     "active_tasks": [
       "face_detection",
-      "text_sentiment"
+      "text_sentiment",
+      "simple_face_detector",
+      "face_attribute",
+      "face_extractor"
     ],
     "active_pipelines": [
       "image_processing_pipeline"
@@ -48,13 +52,11 @@
       "face_detection": {
         "task_id": "face_detection",
         "enabled": true,
-        "queue": "vision",
-        "priority": 7,
+        "queue": "face_detection",
+        "priority": 8,
         "max_retries": 3,
         "retry_delay": 60,
-        "timeout": 120,
-        "memory_limit": null,
-        "cpu_limit": null
+        "timeout": 30
       },
       "text_sentiment": {
         "task_id": "text_sentiment",
@@ -63,9 +65,34 @@
         "priority": 5,
         "max_retries": 3,
         "retry_delay": 60,
-        "timeout": 60,
-        "memory_limit": null,
-        "cpu_limit": null
+        "timeout": 60
+      },
+      "simple_face_detector": {
+        "task_id": "simple_face_detector",
+        "enabled": true,
+        "queue": "default",
+        "priority": 5,
+        "max_retries": 3,
+        "retry_delay": 60,
+        "timeout": 300
+      },
+      "face_attribute": {
+        "task_id": "face_attribute",
+        "enabled": true,
+        "queue": "face_attribute",
+        "priority": 6,
+        "max_retries": 3,
+        "retry_delay": 60,
+        "timeout": 15
+      },
+      "face_extractor": {
+        "task_id": "face_extractor",
+        "enabled": true,
+        "queue": "face_extractor",
+        "priority": 6,
+        "max_retries": 3,
+        "retry_delay": 60,
+        "timeout": 20
       }
     },
     "pipeline_configs": {
@@ -81,8 +108,8 @@
         "fail_fast": true
       }
     },
-    "task_cache_dir": "./task_cache",
-    "pipeline_cache_dir": "./pipeline_cache",
+    "task_cache_dir": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache",
+    "pipeline_cache_dir": "F:\\Viettel\\Sources\\worker-task-manager-v2\\pipeline_cache",
     "auto_update": true,
     "max_concurrent_tasks": 5,
     "health_check_interval": 30,
@@ -96,8 +123,6 @@
     "api_host": "0.0.0.0",
     "api_port": 8000,
     "metrics_enabled": true,
-    "prometheus_port": 8001,
-    "api_key": null,
-    "jwt_secret": null
+    "prometheus_port": 8001
   }
 }

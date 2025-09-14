@@ -11,9 +11,9 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 from loguru import logger
 
-from ..core.config.manager import get_config
-from ..core.database.operations import db_ops
-from ..core.database.models import WorkerStatus
+from core.config.manager import get_config
+from core.database.operations import db_ops
+from core.database.models import WorkerStatus
 
 
 class WorkerManager:

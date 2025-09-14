@@ -42,7 +42,7 @@ class MongoDBConnection:
     
     def disconnect(self):
         """Close MongoDB connection"""
-        if self._client:
+        if self._client is not None:
             self._client.close()
             self._client = None
             self._database = None
@@ -51,7 +51,7 @@ class MongoDBConnection:
     @property
     def client(self) -> MongoClient:
         """Get MongoDB client"""
-        if not self._client:
+        if self._client is None:
             if not self.connect():
                 raise ConnectionError("Failed to connect to MongoDB")
         return self._client
@@ -59,13 +59,14 @@ class MongoDBConnection:
     @property
     def database(self) -> Database:
         """Get database instance"""
-        if not self._database:
+        if self._database is None:
             if not self.connect():
                 raise ConnectionError("Failed to connect to MongoDB")
         return self._database
     
     def get_collection(self, collection_name: str) -> Collection:
         """Get collection instance"""
+        # logger.info(f"self.database: {self.database}")
         return self.database[collection_name]
     
     def create_indexes(self):

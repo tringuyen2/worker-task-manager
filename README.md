@@ -224,7 +224,13 @@ class MyParallelPipeline(ParallelPipeline):
         # Combine results
         return combined_result
 ```
+### Demo Step
+python3 -m tools.task_manager create simple_face_detector --template simple
+python3 -m tools.task_manager register tasks/simple_face_detector
+python3 -m tools.task_manager list 
+python3 -m tools.task_manager info simple_face_detector  
 
+python3 -m tools.worker_cli start --daemon
 ## 📊 Monitoring
 
 ### Web Interfaces

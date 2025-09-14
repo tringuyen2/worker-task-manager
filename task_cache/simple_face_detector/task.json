@@ -1,0 +1,14 @@
+{
+  "task_id": "simple_face_detector",
+  "name": "simple_face_detector",
+  "description": "AI task: simple_face_detector",
+  "version": "1.0.0",
+  "author": "Unknown",
+  "category": "general",
+  "entry_point": "task.Task",
+  "requirements": [],
+  "tags": [
+    "simple",
+    "general"
+  ]
+}

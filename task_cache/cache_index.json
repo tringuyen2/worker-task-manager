@@ -1,0 +1,18 @@
+{
+  "simple_face_detector": {
+    "cached_at": "2025-09-14T05:22:10.901978",
+    "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\simple_face_detector"
+  },
+  "face_detection": {
+    "cached_at": "2025-09-14T05:22:10.843760",
+    "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\face_detection"
+  },
+  "face_attribute": {
+    "cached_at": "2025-09-14T05:22:10.969945",
+    "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\face_attribute"
+  },
+  "face_extractor": {
+    "cached_at": "2025-09-14T05:22:11.027503",
+    "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\face_extractor"
+  }
+}

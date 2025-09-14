@@ -6,9 +6,9 @@ from celery.signals import worker_ready, worker_shutdown, task_prerun, task_post
 from kombu import Queue, Exchange
 from loguru import logger
 
-from ..core.config.manager import get_config
-from ..core.database.connection import init_database
-from ..core.storage.connection import init_storage
+from core.config.manager import get_config
+from core.database.connection import init_database
+from core.storage.connection import init_storage
 
 
 def create_celery_app() -> Celery:

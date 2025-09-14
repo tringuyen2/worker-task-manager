@@ -6,11 +6,11 @@ from typing import Dict, Any, List, Optional
 from loguru import logger
 
 from .celery_app import celery_app, ai_task
-from ..core.config.manager import get_config
-from ..core.task_loader.loader import task_loader
-from ..core.database.operations import db_ops
-from ..core.database.models import ExecutionRecord, TaskStatus, TaskType
-from ..pipeline.executor import pipeline_executor
+from core.config.manager import get_config
+from core.task_loader.loader import task_loader
+from core.database.operations import db_ops
+from core.database.models import ExecutionRecord, TaskStatus, TaskType
+from pipeline.executor import pipeline_executor
 
 
 class TaskRegistry:

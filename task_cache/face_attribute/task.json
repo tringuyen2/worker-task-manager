@@ -1,0 +1,53 @@
+{
+  "task_id": "face_attribute",
+  "name": "Face Attribute Analysis", 
+  "description": "Analyze facial attributes including age, gender, emotion, and facial features",
+  "version": "1.0.0",
+  "author": "AI Team",
+  "category": "computer_vision",
+  "entry_point": "task.Task",
+  "requirements": [
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0"
+  ],
+  "tags": ["vision", "face_analysis", "attributes", "demographics"],
+  "queue": "face_attribute",
+  "priority": 6,
+  "timeout": 15,
+  "max_retries": 2,
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "face_bbox": {
+        "type": "array",
+        "items": {"type": "integer"},
+        "description": "Face bounding box [x, y, width, height]"
+      },
+      "original_image": {
+        "type": ["string", "array"],
+        "description": "Image file path or numpy array"
+      },
+      "face_index": {
+        "type": "integer",
+        "description": "Index of the face in the image"
+      }
+    },
+    "required": ["face_bbox", "original_image", "face_index"]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "face_index": {"type": "integer"},
+      "face_bbox": {"type": "array"},
+      "attributes": {
+        "type": "object",
+        "properties": {
+          "age": {"type": "object"},
+          "gender": {"type": "object"},
+          "emotion": {"type": "object"},
+          "facial_features": {"type": "object"}
+        }
+      }
+    }
+  }
+}

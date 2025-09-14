@@ -1,0 +1,124 @@
+{
+  "worker": {
+    "worker_id": "multi_worker_001",
+    "worker_name": "AI Multi-Worker System",
+    "mongodb": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "ai_tasks",
+      "username": "admin",
+      "password": "admin123",
+      "auth_source": "admin"
+    },
+    "minio": {
+      "endpoint": "localhost:9000",
+      "access_key": "minioadmin",
+      "secret_key": "minioadmin",
+      "bucket": "ai-tasks",
+      "secure": false,
+      "region": null
+    },
+    "redis": {
+      "host": "redis-18836.c8.us-east-1-3.ec2.redns.redis-cloud.com",
+      "port": 18836,
+      "db": 0,
+      "password": "DpkPyBQpt4ZJz5t8IDxgm7LjAMZggO5m"
+    },
+    "multi_worker": {
+      "enabled": true,
+      "task_workers": {
+        "face_detection": {
+          "queue": "face_detection",
+          "concurrency": 2,
+          "memory_limit": "512MB",
+          "timeout": 30,
+          "log_level": "INFO"
+        },
+        "face_attribute": {
+          "queue": "face_attribute",
+          "concurrency": 4,
+          "memory_limit": "256MB", 
+          "timeout": 15,
+          "log_level": "INFO"
+        },
+        "face_extractor": {
+          "queue": "face_extractor",
+          "concurrency": 4,
+          "memory_limit": "512MB",
+          "timeout": 20,
+          "log_level": "INFO"
+        }
+      }
+    },
+    "active_tasks": [
+      "face_detection",
+      "face_attribute", 
+      "face_extractor"
+    ],
+    "active_pipelines": [
+      "face_processing_pipeline"
+    ],
+    "task_configs": {
+      "face_detection": {
+        "task_id": "face_detection",
+        "enabled": true,
+        "queue": "face_detection",
+        "priority": 8,
+        "max_retries": 3,
+        "timeout": 30
+      },
+      "face_attribute": {
+        "task_id": "face_attribute", 
+        "enabled": true,
+        "queue": "face_attribute",
+        "priority": 6,
+        "max_retries": 2,
+        "timeout": 15
+      },
+      "face_extractor": {
+        "task_id": "face_extractor",
+        "enabled": true, 
+        "queue": "face_extractor",
+        "priority": 6,
+        "max_retries": 2,
+        "timeout": 20
+      }
+    },
+    "pipeline_configs": {
+      "face_processing_pipeline": {
+        "pipeline_id": "face_processing_pipeline",
+        "enabled": true,
+        "tasks": [
+          "face_detection",
+          "face_attribute", 
+          "face_extractor"
+        ],
+        "routing": {
+          "face_detection": ["face_attribute", "face_extractor"],
+          "face_attribute": ["aggregator"],
+          "face_extractor": ["aggregator"]
+        },
+        "queue": "pipeline",
+        "priority": 7,
+        "parallel_tasks": ["face_attribute", "face_extractor"],
+        "fail_fast": false
+      }
+    },
+    "task_cache_dir": "./task_cache",
+    "pipeline_cache_dir": "./pipeline_cache",
+    "auto_update": true,
+    "max_concurrent_tasks": 10,
+    "health_check_interval": 30,
+    "log_level": "INFO"
+  },
+  "system": {
+    "version": "1.0.0",
+    "environment": "development",
+    "debug": true,
+    "api_enabled": true,
+    "api_host": "0.0.0.0",
+    "api_port": 8000,
+    "metrics_enabled": true,
+    "prometheus_port": 8001
+  }
+}
