@@ -4,7 +4,7 @@
       "pipeline_id": "face_processing_pipeline",
       "name": "Face Processing Pipeline",
       "description": "Detect faces and extract attributes/features in parallel",
-      "enabled": true,
+      "enabled": false,
       "steps": [
         {
           "task_id": "face_detection",

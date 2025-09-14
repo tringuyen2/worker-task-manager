@@ -80,20 +80,20 @@
       "face_attribute": {
         "task_id": "face_attribute",
         "enabled": true,
-        "queue": "face_attribute",
-        "priority": 6,
+        "queue": "default",
+        "priority": 5,
         "max_retries": 3,
         "retry_delay": 60,
-        "timeout": 15
+        "timeout": 300
       },
       "face_extractor": {
         "task_id": "face_extractor",
         "enabled": true,
-        "queue": "face_extractor",
-        "priority": 6,
+        "queue": "default",
+        "priority": 5,
         "max_retries": 3,
         "retry_delay": 60,
-        "timeout": 20
+        "timeout": 300
       }
     },
     "pipeline_configs": {
@@ -119,8 +119,7 @@
         "queue": "face_processing",
         "priority": 7,
         "parallel": true,
-        "fail_fast": false,
-        "timeout": 120
+        "fail_fast": false
       }
     },
     "task_cache_dir": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache",

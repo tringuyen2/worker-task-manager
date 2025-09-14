@@ -4,15 +4,15 @@
     "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\simple_face_detector"
   },
   "face_detection": {
-    "cached_at": "2025-09-14T14:59:22.653205",
+    "cached_at": "2025-09-14T16:24:08.463309",
     "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\face_detection"
   },
   "face_attribute": {
-    "cached_at": "2025-09-14T14:59:22.843540",
+    "cached_at": "2025-09-14T16:24:09.773255",
     "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\face_attribute"
   },
   "face_extractor": {
-    "cached_at": "2025-09-14T14:59:22.882066",
+    "cached_at": "2025-09-14T16:24:09.847464",
     "path": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache\\face_extractor"
   }
 }

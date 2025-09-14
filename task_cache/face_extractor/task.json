@@ -1,53 +1,19 @@
 {
   "task_id": "face_extractor",
   "name": "Face Feature Extractor",
-  "description": "Extract facial features and embeddings for face recognition and matching",
-  "version": "1.0.0", 
-  "author": "AI Team",
+  "description": "Fixed version of face feature extraction supporting both file paths and base64 image data",
+  "version": "1.0.1",
+  "author": "AI Task Manager",
   "category": "computer_vision",
   "entry_point": "task.Task",
   "requirements": [
     "opencv-python>=4.8.0",
     "numpy>=1.24.0"
   ],
-  "tags": ["vision", "face_recognition", "feature_extraction", "biometrics"],
-  "queue": "face_extractor",
-  "priority": 6,
-  "timeout": 20,
-  "max_retries": 2,
-  "input_schema": {
-    "type": "object",
-    "properties": {
-      "face_bbox": {
-        "type": "array",
-        "items": {"type": "integer"},
-        "description": "Face bounding box [x, y, width, height]"
-      },
-      "original_image": {
-        "type": ["string", "array"],
-        "description": "Image file path or numpy array"
-      },
-      "face_index": {
-        "type": "integer", 
-        "description": "Index of the face in the image"
-      }
-    },
-    "required": ["face_bbox", "original_image", "face_index"]
-  },
-  "output_schema": {
-    "type": "object",
-    "properties": {
-      "face_index": {"type": "integer"},
-      "face_bbox": {"type": "array"},
-      "features": {
-        "type": "object",
-        "properties": {
-          "feature_vector": {"type": "array"},
-          "landmarks": {"type": "array"},
-          "geometric_features": {"type": "object"},
-          "quality_metrics": {"type": "object"}
-        }
-      }
-    }
-  }
+  "tags": [
+    "computer_vision",
+    "face_analysis",
+    "feature_extraction",
+    "fixed"
+  ]
 }

@@ -139,22 +139,30 @@ class FaceProcessingPipeline(BasePipeline):
             detection_result = step_results.get("face_detection", {})
             faces = detection_result.get("faces", []) if isinstance(detection_result, dict) else []
 
-            # Extract image source from input
+            # Get original image path
+            original_image_path = None
             if isinstance(input_data, dict) and "image_path" in input_data:
-                image_source = input_data["image_path"]
+                original_image_path = input_data["image_path"]
             elif isinstance(input_data, str):
-                image_source = input_data
+                original_image_path = input_data
             else:
-                image_source = input_data
+                raise ValueError("Could not determine image path for parallel processing")
 
             # Return list of face data for parallel processing
             face_inputs = []
             for i, face in enumerate(faces):
-                face_inputs.append({
+                face_input = {
                     "face_bbox": face.get("bbox"),
-                    "original_image": image_source,
+                    "original_image": original_image_path,  # Pass image path directly
                     "face_index": i
-                })
+                }
+                face_inputs.append(face_input)
+                logger.info(f"Prepared input for {step.task_id} face {i} with image path: {original_image_path}")
+                logger.info(f"Face input data keys: {list(face_input.keys())}")
+                logger.info(f"Face input data: {face_input}")
+                logger.info(f"Face input face_bbox: {face_input.get('face_bbox')}")
+                logger.info(f"Face input original_image: {face_input.get('original_image')}")
+                logger.info(f"Face input face_index: {face_input.get('face_index')}")
 
             return face_inputs
 
