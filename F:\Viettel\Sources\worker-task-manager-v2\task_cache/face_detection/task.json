@@ -1,0 +1,64 @@
+{
+  "task_id": "face_detection",
+  "name": "Face Detection",
+  "description": "Detect faces in images using OpenCV Haar Cascades with comprehensive metadata",
+  "version": "1.0.0",
+  "author": "AI Team",
+  "category": "computer_vision",
+  "entry_point": "task.Task",
+  "requirements": [
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0"
+  ],
+  "tags": ["vision", "face_detection", "opencv", "haar_cascade"],
+  "queue": "face_detection",
+  "priority": 8,
+  "timeout": 30,
+  "max_retries": 3,
+  "input_schema": {
+    "type": ["string", "object", "array"],
+    "description": "Image file path, numpy array, or object with image data",
+    "properties": {
+      "image_path": {
+        "type": "string",
+        "description": "Path to image file"
+      },
+      "image_data": {
+        "type": "string", 
+        "description": "Base64 encoded image data"
+      },
+      "demo_mode": {
+        "type": "boolean",
+        "description": "Use demo mode with simulated image"
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "faces": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "face_id": {"type": "integer"},
+            "bbox": {"type": "array", "items": {"type": "integer"}},
+            "confidence": {"type": "number"},
+            "center": {"type": "array", "items": {"type": "integer"}},
+            "area": {"type": "integer"}
+          }
+        }
+      },
+      "face_count": {"type": "integer"},
+      "image_size": {"type": "array", "items": {"type": "integer"}},
+      "summary": {
+        "type": "object",
+        "properties": {
+          "faces_detected": {"type": "integer"},
+          "has_faces": {"type": "boolean"},
+          "detection_status": {"type": "string"}
+        }
+      }
+    }
+  }
+}

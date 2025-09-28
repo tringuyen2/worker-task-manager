@@ -13,7 +13,7 @@
     "minio": {
       "endpoint": "localhost:9000",
       "access_key": "minioadmin",
-      "secret_key": "minioadmin",
+      "secret_key": "minioadmin123",
       "bucket": "ai-tasks",
       "secure": false
     },
@@ -122,8 +122,8 @@
         "fail_fast": false
       }
     },
-    "task_cache_dir": "F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache",
-    "pipeline_cache_dir": "F:\\Viettel\\Sources\\worker-task-manager-v2\\pipeline_cache",
+    "task_cache_dir": "/home/tri/Documents/Dev/worker-task-manager/F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache",
+    "pipeline_cache_dir": "/home/tri/Documents/Dev/worker-task-manager/F:\\Viettel\\Sources\\worker-task-manager-v2\\pipeline_cache",
     "auto_update": true,
     "max_concurrent_tasks": 5,
     "health_check_interval": 30,

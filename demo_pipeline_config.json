@@ -1,0 +1,207 @@
+{
+  "pipelines": {
+    "demo_face_processing_pipeline": {
+      "pipeline_id": "demo_face_processing_pipeline",
+      "name": "Demo Face Processing Pipeline",
+      "description": "Complete demo pipeline: face detection followed by parallel attribute analysis and feature extraction",
+      "enabled": true,
+      "steps": [
+        {
+          "step_id": "step_1_face_detection",
+          "task_id": "demo_face_detection",
+          "queue": "face_detection",
+          "timeout": 30,
+          "retry_count": 3,
+          "depends_on": null,
+          "parallel_group": null,
+          "description": "Detect faces in the input image and output face bounding boxes",
+          "input_mapping": {
+            "source": "pipeline_input",
+            "mapping": {
+              "image_path": "input_001_image_path",
+              "confidence_threshold": "input_001_confidence"
+            }
+          },
+          "output_mapping": {
+            "output_id": "face_detection_output_001",
+            "primary_outputs": ["output_001_faces_array"],
+            "metadata_outputs": ["output_001_face_count", "output_001_image_size", "output_001_summary"]
+          }
+        },
+        {
+          "step_id": "step_2_face_attributes",
+          "task_id": "demo_face_attribute",
+          "queue": "face_attribute",
+          "timeout": 25,
+          "retry_count": 2,
+          "depends_on": ["step_1_face_detection"],
+          "parallel_group": "parallel_analysis",
+          "description": "Analyze face attributes (age, gender, emotion) from detected faces",
+          "input_mapping": {
+            "source": "step_1_face_detection",
+            "source_output_id": "face_detection_output_001",
+            "mapping": {
+              "faces": "output_001_faces_array",
+              "image_path": "input_001_image_path"
+            },
+            "target_input_id": "face_attribute_input_002"
+          },
+          "output_mapping": {
+            "output_id": "face_attribute_output_002",
+            "primary_outputs": ["output_002_faces_with_attributes"],
+            "attribute_outputs": ["output_002_age", "output_002_gender", "output_002_emotion"],
+            "metadata_outputs": ["output_002_processing_summary"]
+          }
+        },
+        {
+          "step_id": "step_3_face_features",
+          "task_id": "demo_face_extractor",
+          "queue": "face_extractor",
+          "timeout": 30,
+          "retry_count": 2,
+          "depends_on": ["step_1_face_detection"],
+          "parallel_group": "parallel_analysis",
+          "description": "Extract face feature vectors and embeddings from detected faces",
+          "input_mapping": {
+            "source": "step_1_face_detection",
+            "source_output_id": "face_detection_output_001",
+            "mapping": {
+              "faces": "output_001_faces_array",
+              "image_path": "input_001_image_path"
+            },
+            "target_input_id": "face_extractor_input_003"
+          },
+          "output_mapping": {
+            "output_id": "face_extractor_output_003",
+            "primary_outputs": ["output_003_faces_with_features"],
+            "feature_outputs": ["output_003_feature_vector", "output_003_feature_dimension"],
+            "metadata_outputs": ["output_003_processing_summary"]
+          }
+        }
+      ],
+      "input_validation": {
+        "required_fields": ["image_path"],
+        "optional_fields": ["confidence_threshold", "analysis_options", "extraction_options"],
+        "supported_formats": ["jpg", "jpeg", "png", "bmp", "tiff"]
+      },
+      "output_format": {
+        "type": "object",
+        "properties": {
+          "faces": "array of face objects with detection, attributes, and features",
+          "processing_summary": "detailed summary of pipeline execution including timing and status"
+        }
+      },
+      "metadata": {
+        "author": "Demo System",
+        "version": "1.0.0",
+        "created": "2025-01-17",
+        "tags": ["demo", "computer_vision", "face_processing", "parallel", "complete_pipeline"]
+      }
+    },
+    "demo_simple_face_pipeline": {
+      "pipeline_id": "demo_simple_face_pipeline",
+      "name": "Demo Simple Face Detection Pipeline",
+      "description": "Basic demo pipeline for face detection only",
+      "enabled": true,
+      "steps": [
+        {
+          "step_id": "step_1_face_detection_only",
+          "task_id": "demo_face_detection",
+          "queue": "face_detection",
+          "timeout": 30,
+          "retry_count": 3,
+          "depends_on": null,
+          "parallel_group": null,
+          "description": "Simple face detection without additional analysis"
+        }
+      ],
+      "input_validation": {
+        "required_fields": ["image_path"],
+        "optional_fields": ["confidence_threshold"],
+        "supported_formats": ["jpg", "jpeg", "png", "bmp", "tiff"]
+      },
+      "output_format": {
+        "type": "object",
+        "properties": {
+          "faces": "array of detected face bounding boxes with basic metadata",
+          "face_count": "total number of faces detected"
+        }
+      },
+      "metadata": {
+        "author": "Demo System",
+        "version": "1.0.0",
+        "created": "2025-01-17",
+        "tags": ["demo", "computer_vision", "face_detection", "simple"]
+      }
+    }
+  },
+  "global_settings": {
+    "default_timeout": 300,
+    "default_retry_count": 3,
+    "max_parallel_tasks": 10,
+    "enable_caching": true,
+    "log_level": "INFO",
+    "demo_mode": true
+  },
+  "demo_workflow": {
+    "description": "This configuration demonstrates a complete face processing workflow",
+    "workflow_steps": [
+      "1. Input: Image file path (e.g., 'test.jpg')",
+      "2. Step 1: Face detection - detects all faces and outputs bounding boxes",
+      "3. Step 2 & 3 (Parallel): Face attribute analysis + Face feature extraction",
+      "4. Output: Combined results with faces containing detection, attributes, and features"
+    ],
+    "parallel_execution": {
+      "group_name": "parallel_analysis",
+      "description": "Face attribute and feature extraction run in parallel after face detection",
+      "tasks": ["demo_face_attribute", "demo_face_extractor"],
+      "expected_speedup": "~2x faster than sequential execution"
+    }
+  },
+  "data_flow_mapping": {
+    "description": "Explicit mapping of data flow between tasks using unique IDs",
+    "flow_diagram": {
+      "step_1": {
+        "input": "pipeline_input → input_001_image_path",
+        "output": "face_detection_output_001 → output_001_faces_array"
+      },
+      "step_2": {
+        "input": "output_001_faces_array → input_002_faces_array",
+        "output": "face_attribute_output_002 → output_002_faces_with_attributes"
+      },
+      "step_3": {
+        "input": "output_001_faces_array → input_003_faces_array",
+        "output": "face_extractor_output_003 → output_003_faces_with_features"
+      }
+    },
+    "id_mapping_rules": {
+      "task_input_ids": ["face_detection_input_001", "face_attribute_input_002", "face_extractor_input_003"],
+      "task_output_ids": ["face_detection_output_001", "face_attribute_output_002", "face_extractor_output_003"],
+      "primary_data_flow": [
+        "output_001_faces_array → input_002_faces_array",
+        "output_001_faces_array → input_003_faces_array"
+      ],
+      "shared_inputs": ["input_001_image_path → input_002_image_path", "input_001_image_path → input_003_image_path"]
+    }
+  },
+  "input_processors": {
+    "image_input": {
+      "supported_types": ["file_path", "base64", "numpy_array"],
+      "validation_rules": {
+        "max_file_size_mb": 50,
+        "min_dimensions": [32, 32],
+        "max_dimensions": [4096, 4096],
+        "supported_extensions": [".jpg", ".jpeg", ".png", ".bmp", ".tiff"]
+      }
+    }
+  },
+  "output_processors": {
+    "face_results": {
+      "format": "json",
+      "include_metadata": true,
+      "include_timing": true,
+      "compression": false,
+      "pretty_print": true
+    }
+  }
+}

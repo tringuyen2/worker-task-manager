@@ -1,0 +1,14 @@
+{
+  "face_detection": {
+    "cached_at": "2025-09-27T16:51:14.444129",
+    "path": "/home/tri/Documents/Dev/worker-task-manager/F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache/face_detection"
+  },
+  "face_attribute": {
+    "cached_at": "2025-09-27T16:51:14.980922",
+    "path": "/home/tri/Documents/Dev/worker-task-manager/F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache/face_attribute"
+  },
+  "face_extractor": {
+    "cached_at": "2025-09-27T16:51:14.994123",
+    "path": "/home/tri/Documents/Dev/worker-task-manager/F:\\Viettel\\Sources\\worker-task-manager-v2\\task_cache/face_extractor"
+  }
+}

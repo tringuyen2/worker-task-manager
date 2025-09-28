@@ -1,0 +1,123 @@
+{
+  "task_id": "demo_face_detection",
+  "name": "Demo Face Detection Task",
+  "description": "Demo task for detecting faces in images using OpenCV with comprehensive metadata output",
+  "version": "1.0.0",
+  "author": "Demo System",
+  "category": "computer_vision",
+  "entry_point": "task.Task",
+  "requirements": [
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0"
+  ],
+  "tags": ["demo", "vision", "face_detection", "opencv"],
+  "queue": "face_detection",
+  "priority": 8,
+  "timeout": 30,
+  "max_retries": 3,
+  "input_schema": {
+    "input_id": "face_detection_input_001",
+    "type": "object",
+    "description": "Input for face detection task",
+    "properties": {
+      "image_path": {
+        "type": "string",
+        "description": "Path to image file for face detection",
+        "example": "test.jpg",
+        "field_id": "input_001_image_path"
+      },
+      "confidence_threshold": {
+        "type": "number",
+        "description": "Minimum confidence threshold for face detection",
+        "default": 0.3,
+        "minimum": 0.1,
+        "maximum": 1.0,
+        "field_id": "input_001_confidence"
+      }
+    },
+    "required": ["image_path"]
+  },
+  "output_schema": {
+    "output_id": "face_detection_output_001",
+    "type": "object",
+    "description": "Face detection results with comprehensive metadata",
+    "properties": {
+      "faces": {
+        "type": "array",
+        "description": "Array of detected faces with bounding boxes and metadata",
+        "field_id": "output_001_faces_array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "face_id": {
+              "type": "integer",
+              "description": "Unique identifier for the detected face",
+              "field_id": "output_001_face_id"
+            },
+            "bbox": {
+              "type": "array",
+              "description": "Bounding box coordinates [x, y, width, height]",
+              "items": {"type": "integer"},
+              "minItems": 4,
+              "maxItems": 4,
+              "field_id": "output_001_bbox"
+            },
+            "confidence": {
+              "type": "number",
+              "description": "Detection confidence score",
+              "field_id": "output_001_confidence"
+            },
+            "center": {
+              "type": "array",
+              "description": "Center point of the face [x, y]",
+              "items": {"type": "integer"},
+              "minItems": 2,
+              "maxItems": 2,
+              "field_id": "output_001_center"
+            },
+            "area": {
+              "type": "integer",
+              "description": "Area of the face bounding box in pixels",
+              "field_id": "output_001_area"
+            }
+          },
+          "required": ["face_id", "bbox", "confidence"]
+        }
+      },
+      "face_count": {
+        "type": "integer",
+        "description": "Total number of faces detected",
+        "field_id": "output_001_face_count"
+      },
+      "image_size": {
+        "type": "array",
+        "description": "Original image dimensions [width, height]",
+        "items": {"type": "integer"},
+        "minItems": 2,
+        "maxItems": 2,
+        "field_id": "output_001_image_size"
+      },
+      "processing_time": {
+        "type": "number",
+        "description": "Time taken for processing in seconds",
+        "field_id": "output_001_processing_time"
+      },
+      "summary": {
+        "type": "object",
+        "description": "Processing summary and metadata",
+        "field_id": "output_001_summary",
+        "properties": {
+          "faces_detected": {"type": "integer"},
+          "has_faces": {"type": "boolean"},
+          "detection_status": {"type": "string"}
+        }
+      }
+    },
+    "required": ["faces", "face_count", "summary"],
+    "output_mapping": {
+      "primary_output": "output_001_faces_array",
+      "secondary_outputs": ["output_001_face_count", "output_001_image_size"],
+      "metadata_outputs": ["output_001_summary", "output_001_processing_time"]
+    }
+  }
+}

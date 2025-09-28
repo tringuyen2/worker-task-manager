@@ -1,0 +1,19 @@
+{
+  "task_id": "face_attribute",
+  "name": "Face Attribute Analysis",
+  "description": "Fixed version of face attribute analysis supporting both file paths and base64 image data",
+  "version": "1.0.1",
+  "author": "AI Task Manager",
+  "category": "computer_vision",
+  "entry_point": "task.Task",
+  "requirements": [
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0"
+  ],
+  "tags": [
+    "computer_vision",
+    "face_analysis",
+    "attributes",
+    "fixed"
+  ]
+}

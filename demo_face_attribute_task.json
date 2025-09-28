@@ -1,0 +1,157 @@
+{
+  "task_id": "demo_face_attribute",
+  "name": "Demo Face Attribute Analysis Task",
+  "description": "Demo task for analyzing face attributes including age, gender, emotion from detected faces",
+  "version": "1.0.0",
+  "author": "Demo System",
+  "category": "computer_vision",
+  "entry_point": "task.Task",
+  "requirements": [
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0"
+  ],
+  "tags": ["demo", "computer_vision", "face_analysis", "attributes"],
+  "queue": "face_attribute",
+  "priority": 6,
+  "timeout": 25,
+  "max_retries": 2,
+  "input_schema": {
+    "input_id": "face_attribute_input_002",
+    "type": "object",
+    "description": "Input for face attribute analysis task",
+    "input_mapping": {
+      "source_task": "demo_face_detection",
+      "source_output_id": "face_detection_output_001",
+      "mapped_fields": {
+        "faces": "output_001_faces_array",
+        "image_path": "input_001_image_path"
+      }
+    },
+    "properties": {
+      "faces": {
+        "type": "array",
+        "description": "Array of detected faces from face detection output",
+        "field_id": "input_002_faces_array",
+        "source_field_id": "output_001_faces_array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "face_id": {
+              "type": "integer",
+              "field_id": "input_002_face_id",
+              "source_field_id": "output_001_face_id"
+            },
+            "bbox": {
+              "type": "array",
+              "items": {"type": "integer"},
+              "minItems": 4,
+              "maxItems": 4,
+              "field_id": "input_002_bbox",
+              "source_field_id": "output_001_bbox"
+            },
+            "confidence": {
+              "type": "number",
+              "field_id": "input_002_confidence",
+              "source_field_id": "output_001_confidence"
+            }
+          },
+          "required": ["face_id", "bbox"]
+        }
+      },
+      "image_path": {
+        "type": "string",
+        "description": "Path to the original image file",
+        "field_id": "input_002_image_path",
+        "source_field_id": "input_001_image_path"
+      },
+      "analysis_options": {
+        "type": "object",
+        "description": "Options for attribute analysis",
+        "field_id": "input_002_analysis_options",
+        "properties": {
+          "detect_age": {"type": "boolean", "default": true},
+          "detect_gender": {"type": "boolean", "default": true},
+          "detect_emotion": {"type": "boolean", "default": true}
+        }
+      }
+    },
+    "required": ["faces"]
+  },
+  "output_schema": {
+    "output_id": "face_attribute_output_002",
+    "type": "object",
+    "description": "Face attribute analysis results",
+    "properties": {
+      "faces": {
+        "type": "array",
+        "description": "Faces with attribute analysis results",
+        "field_id": "output_002_faces_with_attributes",
+        "items": {
+          "type": "object",
+          "properties": {
+            "face_id": {
+              "type": "integer",
+              "field_id": "output_002_face_id"
+            },
+            "bbox": {
+              "type": "array",
+              "items": {"type": "integer"},
+              "field_id": "output_002_bbox"
+            },
+            "attributes": {
+              "type": "object",
+              "description": "Detected face attributes",
+              "field_id": "output_002_attributes",
+              "properties": {
+                "age": {
+                  "type": "integer",
+                  "description": "Estimated age in years",
+                  "minimum": 0,
+                  "maximum": 120,
+                  "field_id": "output_002_age"
+                },
+                "gender": {
+                  "type": "string",
+                  "description": "Detected gender",
+                  "enum": ["male", "female", "unknown"],
+                  "field_id": "output_002_gender"
+                },
+                "emotion": {
+                  "type": "string",
+                  "description": "Primary detected emotion",
+                  "enum": ["happy", "sad", "angry", "surprised", "neutral", "fearful", "disgusted"],
+                  "field_id": "output_002_emotion"
+                },
+                "confidence": {
+                  "type": "number",
+                  "description": "Overall confidence of attribute detection",
+                  "minimum": 0.0,
+                  "maximum": 1.0,
+                  "field_id": "output_002_attr_confidence"
+                }
+              }
+            }
+          },
+          "required": ["face_id", "bbox", "attributes"]
+        }
+      },
+      "processing_summary": {
+        "type": "object",
+        "description": "Summary of attribute analysis",
+        "field_id": "output_002_processing_summary",
+        "properties": {
+          "total_faces_processed": {"type": "integer"},
+          "successful_analyses": {"type": "integer"},
+          "failed_analyses": {"type": "integer"},
+          "processing_time": {"type": "number"}
+        }
+      }
+    },
+    "required": ["faces", "processing_summary"],
+    "output_mapping": {
+      "primary_output": "output_002_faces_with_attributes",
+      "attribute_outputs": ["output_002_age", "output_002_gender", "output_002_emotion"],
+      "metadata_outputs": ["output_002_processing_summary", "output_002_attr_confidence"]
+    }
+  }
+}
